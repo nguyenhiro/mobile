@@ -36,8 +36,8 @@
 
         #game-container {
             grid-area: game-area; 
-            width: 1280px; /* Kích thước tham chiếu */
-            height: 720px; /* Kích thước tham chiếu */
+            width: 900px; /* Kích thước tham chiếu */
+            height: 450px; /* Kích thước tham chiếu */
             border: 5px solid #333;
             background-color: #aaddff;
             position: relative; 
@@ -498,8 +498,8 @@
         let movingObstacles = [];
 
         // Kích thước game gốc (reference size)
-        const gameBaseWidth = 1280;
-        const gameBaseHeight = 720;
+        const gameBaseWidth = 900;
+        const gameBaseHeight = 450;
         const gameAspectRatio = gameBaseWidth / gameBaseHeight; 
 
         // --- CÁC GIỚI HẠN SCALE ---
@@ -511,9 +511,14 @@
         let currentEffectiveGameHeight = gameBaseHeight;
 
         // BIẾN MỚI: Độ mượt của camera
-        const CAMERA_SMOOTHNESS = 0.08; // Giá trị từ 0.01 (rất mượt) đến 1.0 (không mượt)
-        const CAMERA_OFFSET_X = -150; // Camera lệch về bên trái nhân vật một chút (giúp nhìn thấy phía trước)
-        const CAMERA_OFFSET_Y = 50; // Camera cao hơn nhân vật một chút (giúp nhìn thấy phía trên)
+        const CAMERA_SMOOTHNESS = 0.08; 
+        const CAMERA_OFFSET_X = -150; 
+        const CAMERA_OFFSET_Y = 50;   
+
+        // BIẾN MỚI: Ngưỡng X của nhân vật để camera bắt đầu di chuyển
+        // Ví dụ: camera bắt đầu cuộn khi nhân vật đi được 1/3 màn hình game container
+        // Bạn có thể điều chỉnh giá trị này. Ví dụ, 300px, 400px,...
+        const initialCameraStartThreshold = 300; 
 
 
         // Hàm điều chỉnh kích thước game container cho responsive
@@ -863,10 +868,6 @@
             cancelAnimationFrame(window.animationFrameId);
         }
 
-        // Camera dead zone parameters (will be replaced by smooth follow)
-        // const deadZoneWidth = 0.4; 
-        // const deadZoneOffset = (1 - deadZoneWidth) / 2; 
-
         function gameLoop(currentTime) {
             if (isGameOver) return;
 
@@ -903,7 +904,8 @@
             }
             
             playerX += xVelocity;
-            playerX = Math.max(0, Math.min(level1Data.worldWidth - playerActualWidth, playerX));
+            // Không giới hạn playerX ở đây nữa, mà để camera xử lý giới hạn world
+            // playerX = Math.max(0, Math.min(level1Data.worldWidth - playerActualWidth, playerX));
             checkCollisionsX(); 
 
             const previousPlayerY = playerY;
@@ -912,22 +914,28 @@
 
             updatePlayerPosition();
 
-            // --- LOGIC CAMERA SMOOTH FOLLOW MỚI ---
-            // Vị trí mục tiêu của camera (tính toán dựa trên vị trí nhân vật và offset)
-            // Camera thường đặt nhân vật ở một vị trí nhất định trên màn hình (ví dụ: 1/3 từ trái)
-            const targetCameraX = -(playerX - (currentEffectiveGameWidth / 2) + (playerActualWidth / 2) + CAMERA_OFFSET_X);
-            const targetCameraY = -(playerY - (currentEffectiveGameHeight / 2) + (playerActualHeight / 2) + CAMERA_OFFSET_Y);
+            // --- LOGIC CAMERA MỚI: Chỉ khởi động khi đạt ngưỡng ---
+            let targetCameraX;
+
+            // Nếu nhân vật chưa đạt ngưỡng, camera vẫn đứng yên ở vị trí ban đầu (cameraX = 0)
+            if (playerX < initialCameraStartThreshold) {
+                targetCameraX = 0; // Camera đứng yên ở vị trí đầu màn chơi
+            } else {
+                // Nếu nhân vật đã vượt ngưỡng, áp dụng smooth follow
+                // Vị trí mục tiêu của camera (đặt nhân vật ở một vị trí nhất định trên màn hình)
+                targetCameraX = -(playerX - (currentEffectiveGameWidth / 3) + (playerActualWidth / 2)); 
+                // Tôi đã điều chỉnh lại offset để nhân vật xuất hiện ở khoảng 1/3 màn hình từ trái
+                // Thay vì CAMERA_OFFSET_X, để đảm bảo nhân vật ở 1/3 màn hình khi camera bắt đầu cuộn
+                // Bạn có thể tùy chỉnh currentEffectiveGameWidth / X để thay đổi vị trí nhân vật.
+            }
             
             // Áp dụng Lerp để làm mượt chuyển động của camera
             cameraX = cameraX + (targetCameraX - cameraX) * CAMERA_SMOOTHNESS;
-            // Nếu bạn muốn camera cũng mượt theo chiều dọc, hãy thêm dòng này
-            // cameraY = cameraY + (targetCameraY - cameraY) * CAMERA_SMOOTHNESS; 
-            // Lưu ý: hiện tại game của bạn chỉ cuộn ngang, nên cameraY có thể không cần thiết
 
             // Giới hạn cameraX để không cuộn ra ngoài thế giới game
             // cameraX là giá trị âm, đại diện cho việc kéo gameWorld sang trái.
-            // maxAllowedCameraX = 0: Khi camera ở điểm bắt đầu của thế giới game (left edge của gameWorld trùng với left edge của gameContainer)
-            // minAllowedCameraX = -(level1Data.worldWidth - currentEffectiveGameWidth): Khi camera cuộn đến cuối thế giới game (right edge của gameWorld trùng với right edge của gameContainer)
+            // maxAllowedCameraX = 0: Khi camera ở điểm bắt đầu của thế giới game
+            // minAllowedCameraX = -(level1Data.worldWidth - currentEffectiveGameWidth): Khi camera cuộn đến cuối thế giới game
             const maxAllowedCameraX = 0; 
             const minAllowedCameraX = -(level1Data.worldWidth - currentEffectiveGameWidth); 
 
@@ -1034,9 +1042,9 @@
             window.animationFrameId = requestAnimationFrame(gameLoop); 
         }
 
-        // Gọi resizeGame lần đầu khi trang tải xong và khởi tạo game
+        // Gọi resizeGame lần đầu khi trang tải xong
         document.addEventListener('DOMContentLoaded', () => {
-            resizeGame(); // Gọi trước để currentEffectiveGameWidth có giá trị ban đầu chính xác
+            resizeGame(); 
             initializeGame();
         });
     </script>
