@@ -36,8 +36,8 @@
 
         #game-container {
             grid-area: game-area; 
-            width: 1200px; 
-            height: 400px; 
+            width: 450px; 
+            height: 225px; 
             border: 5px solid #333;
             background-color: #aaddff;
             position: relative; 
@@ -406,6 +406,35 @@
             #mobile-controls, #left-controls-area, #right-controls-area {
                 display: none !important; 
             }
+            /* THÊM PHẦN NÀY VÀO ĐÂY */
+            #game-container {
+        /*
+         * Đây là nơi bạn sẽ đặt kích thước mục tiêu cho PC.
+         *
+         * LỰA CHỌN 1: Nếu bạn muốn PC hiển thị chính xác 900x450 (như kích thước cũ):
+         */
+             width: 900px;
+             height: 450px;
+             transform: scale(1); /* Hoặc bỏ dòng này nếu bạn muốn dựa vào width/height */
+
+        /*
+         * LỰA CHỌN 2: Nếu bạn đã đổi gameBaseWidth/Height trong JS thành 450x225
+         * và muốn PC phóng to gấp đôi từ kích thước đó (giữ pixel lớn hơn):
+         */
+        /*
+        width: 450px;
+        height: 225px;
+        transform: scale(2); // Phóng to 2 lần
+        */
+
+        /*
+         * QUAN TRỌNG: Đặt lại max-width/max-height để không bị giới hạn bởi 99vw/vh của mobile
+         */
+        max-width: none;
+        max-height: none;
+    }
+    /* KẾT THÚC PHẦN CẦN THÊM */
+}
         }
     </style>
 </head>
@@ -499,8 +528,8 @@
         let movingObstacles = [];
 
         // Kích thước game gốc (reference size)
-        const gameBaseWidth = 1200;
-        const gameBaseHeight = 400;
+        const gameBaseWidth = 450;
+        const gameBaseHeight = 220;
         const gameAspectRatio = gameBaseWidth / gameBaseHeight; 
 
         // --- CÁC GIỚI HẠN SCALE ---
@@ -849,7 +878,7 @@
         }
 
         // Camera dead zone parameters
-        const deadZoneWidth = 0.08; // 8% của gameBaseWidth
+        const deadZoneWidth = 0.4; // 40% của gameBaseWidth
         const deadZoneOffset = (1 - deadZoneWidth) / 2; // Khoảng cách từ mép đến vùng chết
 
         function gameLoop(currentTime) {
