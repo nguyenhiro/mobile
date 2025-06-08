@@ -36,8 +36,8 @@
 
         #game-container {
             grid-area: game-area; 
-            width: 700px; 
-            height: 400px;
+            width: 1280px; 
+            height: 720px;
             border: 5px solid #333;
             background-color: #aaddff;
             position: relative; 
@@ -499,8 +499,8 @@
         let movingObstacles = [];
 
         // Kích thước game gốc (reference size)
-        const gameBaseWidth = 700;
-        const gameBaseHeight = 400;
+        const gameBaseWidth = 1280;
+        const gameBaseHeight = 720;
         const gameAspectRatio = gameBaseWidth / gameBaseHeight; 
 
         // --- CÁC GIỚI HẠN SCALE ---
@@ -849,7 +849,7 @@
         }
 
         // Camera dead zone parameters
-        const deadZoneWidth = 0.1; // 10% của gameBaseWidth
+        const deadZoneWidth = 0.2; // 20% của gameBaseWidth
         const deadZoneOffset = (1 - deadZoneWidth) / 2; // Khoảng cách từ mép đến vùng chết
 
         function gameLoop(currentTime) {
