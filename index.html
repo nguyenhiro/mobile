@@ -36,8 +36,8 @@
 
         #game-container {
             grid-area: game-area; 
-            width: 900px; /* Kích thước tham chiếu */
-            height: 450px; /* Kích thước tham chiếu */
+            width: 1280px; /* Kích thước tham chiếu */
+            height: 720px; /* Kích thước tham chiếu */
             border: 5px solid #333;
             background-color: #aaddff;
             position: relative; 
@@ -498,8 +498,8 @@
         let movingObstacles = [];
 
         // Kích thước game gốc (reference size)
-        const gameBaseWidth = 900;
-        const gameBaseHeight = 450;
+        const gameBaseWidth = 1280;
+        const gameBaseHeight = 720;
         const gameAspectRatio = gameBaseWidth / gameBaseHeight; 
 
         // --- CÁC GIỚI HẠN SCALE ---
@@ -518,7 +518,7 @@
         // BIẾN MỚI: Ngưỡng X của nhân vật để camera bắt đầu di chuyển
         // Ví dụ: camera bắt đầu cuộn khi nhân vật đi được 1/3 màn hình game container
         // Bạn có thể điều chỉnh giá trị này. Ví dụ, 300px, 400px,...
-        const initialCameraStartThreshold = 300; 
+        const initialCameraStartThreshold = 100; 
 
 
         // Hàm điều chỉnh kích thước game container cho responsive
