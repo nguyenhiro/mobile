@@ -3,22 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mario Đơn Giản (Tối ưu Mobile Ngang & Căn giữa)</title>
+    <title>Mario Đơn Giản (Tối ưu Full)</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            overflow: hidden; /* Quan trọng: Ngăn thanh cuộn của body */
+            overflow: hidden; /* Ngăn thanh cuộn của body */
             background-color: #87ceeb;
             background-image: url('body.jpg'); /* Đường dẫn đến ảnh nền bạn muốn */
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center center;
-            /* Sử dụng Flexbox để căn giữa game-container */
-            display: flex;
-            flex-direction: column; /* Quan trọng: Xếp game và controls theo cột */
-            justify-content: center; /* Căn giữa theo chiều dọc (game-container + mobile-controls) */
-            align-items: center;   /* Căn giữa theo chiều ngang */
+            
+            /* THAY ĐỔI LỚN: Sử dụng Grid để có bố cục linh hoạt hơn */
+            display: grid;
+            grid-template-areas: 
+                "game-area"
+                "controls-area"; /* Mặc định mobile dọc: controls nằm dưới game */
+            grid-template-rows: 1fr auto; /* Game chiếm phần lớn, controls chiếm phần nhỏ */
+            grid-template-columns: 1fr;
+            
+            justify-items: center; /* Căn giữa nội dung trong mỗi area theo chiều ngang */
+            align-items: center;   /* Căn giữa nội dung trong mỗi area theo chiều dọc */
+            
             min-height: 100vh;
             width: 100vw; 
             box-sizing: border-box; 
@@ -29,6 +36,7 @@
         }
 
         #game-container {
+            grid-area: game-area; /* Đặt game vào vùng game-area */
             /* Kích thước gốc (tỷ lệ 2:1) - Đây là kích thước logic của game */
             width: 900px; 
             height: 450px;
@@ -41,17 +49,16 @@
             transform: scale(1); 
             transition: transform 0.1s ease-out; 
             
-            /* Giới hạn kích thước trên PC, sử dụng tỷ lệ viewport lớn hơn để game to hơn */
-            max-width: 98vw; /* Tăng từ 95vw lên 98vw */
-            max-height: 98vh; /* Tăng từ 95vh lên 98vh */
-            /* Điều này giúp game không bị quá to trên màn hình lớn và tự động co giãn */
+            /* Tăng giới hạn kích thước trên PC để game to hơn nữa */
+            max-width: 99vw; /* Tăng từ 98vw lên 99vw */
+            max-height: 99vh; /* Tăng từ 98vh lên 99vh */
         }
 
         #game-world {
             position: absolute;
             top: 0;
             left: 0;
-            width: 2500px; /* Chiều rộng thế giới game */
+            width: 2500px; 
             height: 100%;
             transition: transform 0.1s linear;
             background-image: url('game.jpg');
@@ -158,7 +165,6 @@
             width: 80%; 
             max-width: 600px;
             box-sizing: border-box;
-            /* Thêm pointer-events để nút chơi lại hoạt động */
             pointer-events: auto; 
         }
         #game-message p {
@@ -191,7 +197,6 @@
             border-radius: 8px;
             transition: background-color 0.2s, transform 0.2s;
             font-family: 'Roboto', sans-serif;
-            /* Đảm bảo nút này có thể được click */
             pointer-events: auto; 
         }
         #reset-button:hover {
@@ -199,49 +204,44 @@
             transform: scale(1.05);
         }
 
-        /* Nút điều khiển cảm ứng (Mobile only) */
+        /* Mobile Controls */
         #mobile-controls {
-            /* Bỏ position: fixed để nó nằm dưới game-container trong flexbox */
-            /* position: fixed; */ 
-            margin-top: 15px; /* Khoảng cách từ game-container */
-            width: 90%; /* Chiếm 90% chiều rộng của body (khi căn giữa) */
-            max-width: 600px; /* Giới hạn kích thước tối đa giống game-message */
+            grid-area: controls-area; /* Đặt controls vào vùng controls-area */
+            width: 100%; /* Chiếm 100% chiều ngang của grid cell */
+            max-width: 900px; /* Giới hạn chiều rộng để khớp với game-container */
+            padding: 10px; /* Thêm padding cho vùng controls */
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around; /* Căn đều các nhóm nút */
             align-items: center;
             z-index: 1000;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 10px 20px; 
+            /* background-color: rgba(0, 0, 0, 0.5); */ /* Bỏ màu nền hoặc làm trong suốt */
+            background-color: transparent; /* Hoặc opacity thấp hơn */
             border-radius: 15px;
-            opacity: 0.9;
-            /* Bỏ left, transformX vì body flexbox đã căn giữa */
-            /* left: 50%; */
-            /* transform: translateX(-50%); */
-            display: none; /* Mặc định ẩn, JS sẽ điều khiển */
+            opacity: 0.9; /* Vẫn giữ opacity cho nút */
             box-sizing: border-box;
-            gap: 15px; 
-            pointer-events: auto; /* Đảm bảo nút này có thể được click */
+            gap: 15px; /* Khoảng cách giữa các nhóm nút */
+            pointer-events: auto;
+            display: none; /* Mặc định ẩn, JS sẽ điều khiển */
         }
         .control-group {
             display: flex;
-            /* Tăng khoảng cách giữa các nút trái/phải */
-            gap: 20px; /* Tăng từ 10px lên 20px */
+            gap: 25px; /* Tăng khoảng cách giữa các nút trái/phải */
         }
         .control-button {
-            width: 13vw; 
-            height: 13vw; 
-            max-width: 70px; 
-            max-height: 70px; 
-            min-width: 50px; /* Tăng từ 45px lên 50px để nút to hơn */
-            min-height: 50px; 
+            width: 15vw; /* Tăng kích thước nút theo viewport width */
+            height: 15vw; 
+            max-width: 80px; /* Tăng kích thước tối đa của nút */
+            max-height: 80px; 
+            min-width: 60px; /* Tăng kích thước tối thiểu của nút */
+            min-height: 60px; 
             
-            background-color: #007bff;
+            background-color: rgba(0, 123, 255, 0.7); /* Nút trong suốt hơn */
             color: white;
             border: none;
             border-radius: 50%;
-            font-size: 5vw; 
-            max-font-size: 30px; 
-            min-font-size: 24px; /* Tăng từ 22px lên 24px */
+            font-size: 6vw; /* Tăng kích thước font nút theo viewport width */
+            max-font-size: 35px; /* Tăng kích thước font tối đa */
+            min-font-size: 28px; /* Tăng kích thước font tối thiểu */
 
             font-weight: bold;
             cursor: pointer;
@@ -254,75 +254,104 @@
             -webkit-tap-highlight-color: transparent;
         }
         .control-button:active {
-            background-color: #0056b3;
+            background-color: rgba(0, 86, 179, 0.7); /* Màu khi bấm */
             transform: scale(0.9); 
         }
 
-        /* MEDIA QUERIES để tinh chỉnh font size và padding dựa trên kích thước màn hình */
-        /* Cho màn hình rất nhỏ (dưới 480px, thường là điện thoại dọc) */
-        @media (max-width: 480px) {
-            #time-display {
-                font-size: 1.1em; 
-                top: 5px;
-                left: 5px;
+        /* MEDIA QUERIES để tối ưu bố cục và kích thước */
+
+        /* Mobile dọc (portrait) */
+        @media (orientation: portrait) {
+            body {
+                grid-template-areas: 
+                    "game-area"
+                    "controls-area";
+                grid-template-rows: 1fr auto;
+                grid-template-columns: 1fr;
             }
-            #game-message {
-                padding: 20px;
-                font-size: 1.5em; 
+            #game-container {
+                /* Đảm bảo game không quá bé trên dọc */
+                max-width: 95vw;
+                max-height: 70vh; /* Game chiếm 70% chiều cao, còn lại cho controls và khoảng trống */
             }
-            #game-message p {
-                font-size: 1em;
-            }
-            #game-message ul {
-                font-size: 0.8em;
-            }
-            #reset-button {
-                font-size: 1em;
-                padding: 10px 20px;
+            #mobile-controls {
+                width: 90%; /* Dùng 90% chiều rộng để controls không quá to */
+                max-width: 500px;
+                margin-top: 15px; /* Khoảng cách với game */
             }
             .control-button {
-                width: 55px; /* Tăng kích thước nút cho mobile nhỏ */
-                height: 55px;
-                font-size: 26px;
-            }
-            .control-group {
-                gap: 15px; /* Giảm khoảng cách cho mobile nhỏ */
+                width: 15vw; 
+                height: 15vw;
+                min-width: 55px; 
+                min-height: 55px; 
+                font-size: 5vw; 
+                min-font-size: 26px; 
             }
         }
 
-        /* Cho màn hình trung bình (tablet, điện thoại ngang) */
-        @media (min-width: 481px) and (max-width: 999px) {
-            #time-display {
-                font-size: 1.2em;
-                top: 10px;
-                left: 10px;
+        /* Mobile ngang (landscape) và Tablet */
+        @media (orientation: landscape) and (max-width: 999px) {
+            body {
+                grid-template-areas: 
+                    "controls-left game-area controls-right";
+                grid-template-columns: auto 1fr auto; /* Controls trái/phải, game ở giữa */
+                grid-template-rows: 1fr; /* Chỉ có một hàng */
             }
-            #game-message {
-                padding: 30px;
-                font-size: 2em;
+            #game-container {
+                max-width: 80vw; /* Game chiếm tối đa 80% chiều rộng */
+                max-height: 98vh; /* Game chiếm gần hết chiều cao */
             }
-            #game-message p {
-                font-size: 0.9em;
+            #mobile-controls {
+                /* Chia controls thành 2 nhóm, mỗi nhóm nằm trong một grid cell */
+                /* Vì #mobile-controls là container cho cả 3 nút, chúng ta sẽ cần chỉnh JS/HTML thêm */
+                display: none !important; /* Tạm thời ẩn, sẽ điều chỉnh lại cấu trúc để tách nút */
             }
-            #game-message ul {
-                font-size: 0.7em;
+            /* Định nghĩa các vùng điều khiển riêng biệt cho Landscape */
+            #left-controls-area {
+                grid-area: controls-left;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 10px;
+                gap: 15px;
+                background-color: transparent; /* Nền trong suốt */
+                height: 100%;
+                box-sizing: border-box;
             }
-            #reset-button {
-                font-size: 1.1em;
-                padding: 12px 25px;
+            #right-controls-area {
+                grid-area: controls-right;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 10px;
+                gap: 15px;
+                background-color: transparent; /* Nền trong suốt */
+                height: 100%;
+                box-sizing: border-box;
             }
-             .control-button {
-                width: 60px; /* Tăng kích thước nút cho tablet/mobile ngang */
-                height: 60px;
-                font-size: 28px;
-            }
-            .control-group {
-                gap: 20px; 
+            .control-button {
+                width: 10vw; /* Kích thước nút nhỏ hơn để không chiếm quá nhiều không gian ngang */
+                height: 10vw;
+                max-width: 70px;
+                max-height: 70px;
+                min-width: 50px;
+                min-height: 50px;
+                font-size: 4vw;
+                max-font-size: 28px;
+                min-font-size: 20px;
             }
         }
+
 
         /* Cho màn hình lớn (PC) */
         @media (min-width: 1000px) {
+            body {
+                grid-template-areas: "game-area"; /* Chỉ có game-area, không có controls-area */
+                grid-template-rows: 1fr;
+                grid-template-columns: 1fr;
+            }
             #time-display {
                 font-size: 1.3em;
                 top: 15px;
@@ -342,9 +371,8 @@
                 font-size: 1.2em;
                 padding: 15px 30px;
             }
-            /* Trên PC, không cần mobile controls */
-            #mobile-controls {
-                display: none !important; 
+            #mobile-controls, #left-controls-area, #right-controls-area {
+                display: none !important; /* Đảm bảo ẩn hoàn toàn trên PC */
             }
         }
     </style>
@@ -371,6 +399,14 @@
         <button class="control-button" id="jump-button">↑</button>
     </div>
 
+    <div id="left-controls-area">
+        <button class="control-button" id="left-button-landscape">←</button>
+        <button class="control-button" id="right-button-landscape">→</button>
+    </div>
+    <div id="right-controls-area">
+        <button class="control-button" id="jump-button-landscape">↑</button>
+    </div>
+
     <script>
         const player = document.getElementById('player');
         const gameContainer = document.getElementById('game-container');
@@ -379,10 +415,15 @@
         const gameMessage = document.getElementById('game-message');
         const timeDisplay = document.getElementById('time-display');
 
-        // Mobile Controls elements
+        // Mobile Controls elements (portrait/default)
         const leftButton = document.getElementById('left-button');
         const rightButton = document.getElementById('right-button');
         const jumpButton = document.getElementById('jump-button');
+
+        // Mobile Controls elements (landscape)
+        const leftButtonLandscape = document.getElementById('left-button-landscape');
+        const rightButtonLandscape = document.getElementById('right-button-landscape');
+        const jumpButtonLandscape = document.getElementById('jump-button-landscape');
 
         let startTime = 0;
         let elapsedTime = 0;
@@ -431,9 +472,8 @@
         const gameAspectRatio = gameBaseWidth / gameBaseHeight; // 2:1
 
         // --- CÁC GIỚI HẠN MỚI ---
-        const minGameScale = 0.7; // Scale tối thiểu cho game (tăng từ 0.6 để mobile ngang to hơn)
-        const maxGameScale = 1.4; // Scale tối đa cho game (tăng từ 1.2 để PC to hơn)
-        // Chúng ta sẽ dựa vào max-width/max-height của game-container trong CSS để kiểm soát kích thước lớn trên PC
+        const minGameScale = 0.8; // Scale tối thiểu cho game (tăng từ 0.7 để mobile to hơn)
+        const maxGameScale = 1.6; // Scale tối đa cho game (tăng từ 1.4 để PC to hơn nữa)
 
         // Hàm điều chỉnh kích thước game container cho responsive
         function resizeGame() {
@@ -443,28 +483,38 @@
             let scale = 1;
             const viewportAspectRatio = viewportWidth / viewportHeight;
 
+            // Xác định scale dựa trên tỷ lệ khung hình game
             if (viewportAspectRatio > gameAspectRatio) {
-                // Viewport rộng hơn game (có khoảng trống ở hai bên)
+                // Viewport rộng hơn game: Cố gắng lấp đầy chiều cao của viewport
                 scale = viewportHeight / gameBaseHeight;
             } else {
-                // Viewport hẹp hơn hoặc bằng game (có khoảng trống ở trên/dưới)
+                // Viewport hẹp hơn hoặc bằng game: Cố gắng lấp đầy chiều rộng của viewport
                 scale = viewportWidth / gameBaseWidth;
             }
 
-            // --- Áp dụng giới hạn cho scale ---
+            // Áp dụng giới hạn cho scale
             scale = Math.min(scale, maxGameScale);
             scale = Math.max(scale, minGameScale);
 
-            // Áp dụng scale cho game container
             gameContainer.style.transform = `scale(${scale})`;
             
-            // Ẩn/hiện mobile controls dựa trên tỷ lệ game và kích thước viewport
-            const mobileControls = document.getElementById('mobile-controls');
-            // Nếu tỷ lệ game nhỏ (ví dụ: đang chơi trên mobile dọc) HOẶC nếu chiều rộng viewport không quá lớn (ví dụ dưới 1000px, phù hợp cho mobile ngang và tablet)
-            if (scale < 1.0 || viewportWidth < 1000) { 
-                mobileControls.style.display = 'flex';
-            } else {
-                mobileControls.style.display = 'none';
+            // Ẩn/hiện mobile controls dựa trên orientation
+            const mobileControlsPortrait = document.getElementById('mobile-controls');
+            const mobileControlsLeftLandscape = document.getElementById('left-controls-area');
+            const mobileControlsRightLandscape = document.getElementById('right-controls-area');
+
+            if (viewportWidth < 1000 && viewportWidth / viewportHeight < 1) { // Mobile dọc
+                mobileControlsPortrait.style.display = 'flex';
+                mobileControlsLeftLandscape.style.display = 'none';
+                mobileControlsRightLandscape.style.display = 'none';
+            } else if (viewportWidth < 1000 && viewportWidth / viewportHeight >= 1) { // Mobile ngang / Tablet
+                mobileControlsPortrait.style.display = 'none';
+                mobileControlsLeftLandscape.style.display = 'flex';
+                mobileControlsRightLandscape.style.display = 'flex';
+            } else { // PC
+                mobileControlsPortrait.style.display = 'none';
+                mobileControlsLeftLandscape.style.display = 'none';
+                mobileControlsRightLandscape.style.display = 'none';
             }
         }
 
@@ -760,14 +810,12 @@
 
             const existingResetButton = document.querySelector('#game-message #reset-button');
             if (existingResetButton) {
-                // Đảm bảo loại bỏ event listener cũ trước khi thêm cái mới để tránh trùng lặp
                 existingResetButton.removeEventListener('click', initializeGame);
-                existingResetButton.removeEventListener('touchend', initializeGame); // Thêm cho cảm ứng
+                existingResetButton.removeEventListener('touchend', initializeGame); 
             }
-            // Thêm event listener cho cả click (PC) và touchend (cảm ứng)
             document.querySelector('#game-message #reset-button').addEventListener('click', initializeGame);
             document.querySelector('#game-message #reset-button').addEventListener('touchend', (e) => {
-                e.preventDefault(); // Ngăn hành vi mặc định của touchend (như mouse click)
+                e.preventDefault(); 
                 initializeGame();
             });
 
@@ -819,31 +867,31 @@
 
             updatePlayerPosition();
 
-            // Cập nhật logic camera để nó hoạt động với kích thước scaled
+            // Cập nhật logic camera
             const currentComputedStyle = window.getComputedStyle(gameContainer);
             const transformMatrix = new DOMMatrixReadOnly(currentComputedStyle.transform);
             const currentScale = transformMatrix.a; 
 
-            const playerScreenX = playerX * currentScale + cameraX; 
-            const gameContainerActualWidth = gameBaseWidth * currentScale; 
-
-            const cameraThreshold = gameContainerActualWidth / 3; 
-
-            if (playerScreenX > gameContainerActualWidth - cameraThreshold) {
-                cameraX -= (playerScreenX - (gameContainerActualWidth - cameraThreshold));
-            } 
-            else if (playerScreenX < cameraThreshold) {
-                cameraX += (cameraThreshold - playerScreenX);
-            }
-
-            // Giới hạn cameraX để không cuộn ra ngoài giới hạn của game world
+            // Tính toán vị trí player trong hệ tọa độ game world
+            // Giới hạn cameraX để player luôn nằm trong tầm nhìn và thế giới game không bị trống
+            const playerCenter = playerX + playerActualWidth / 2;
+            const gameContainerActualWidth = gameBaseWidth * currentScale;
+            
+            // Tính cameraX sao cho playerCenter nằm ở giữa màn hình hoặc trong giới hạn
+            // cameraX = (gameContainerActualWidth / 2) - playerCenter * currentScale; // Dòng này có thể là nguyên nhân lỗi camera
+            
+            // Sửa lỗi camera: Đảm bảo camera di chuyển mượt mà theo người chơi
+            const targetCameraX = -(playerX - (gameBaseWidth / 2)); 
+            
+            // Giới hạn targetCameraX để không cuộn ra ngoài thế giới game
             const maxCameraX = 0; 
-            const minCameraX = -(level1Data.worldWidth * currentScale - gameContainerActualWidth); 
+            const minCameraX = -(level1Data.worldWidth - gameBaseWidth); 
 
-            cameraX = Math.min(maxCameraX, cameraX); 
+            cameraX = Math.min(maxCameraX, targetCameraX); 
             cameraX = Math.max(minCameraX, cameraX); 
 
             gameWorld.style.transform = `translateX(${cameraX}px)`;
+
 
             checkWin(); 
 
@@ -887,13 +935,22 @@
             }
         });
 
-        // Event listeners for mobile controls (Touch events)
+        // Event listeners cho mobile controls (Portrait)
         leftButton.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingLeft = true; });
         leftButton.addEventListener('touchend', (e) => { e.preventDefault(); isMovingLeft = false; });
         rightButton.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingRight = true; });
-        rightButton.addEventListener('touchend', (e) => { e.preventDefault(); isMovingRight = false; }); // Sửa lỗi: touchend phải reset isMovingRight
+        rightButton.addEventListener('touchend', (e) => { e.preventDefault(); isMovingRight = false; }); 
         jumpButton.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
         jumpButton.addEventListener('touchend', (e) => { e.preventDefault(); }); 
+
+        // Event listeners cho mobile controls (Landscape)
+        leftButtonLandscape.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingLeft = true; });
+        leftButtonLandscape.addEventListener('touchend', (e) => { e.preventDefault(); isMovingLeft = false; });
+        rightButtonLandscape.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingRight = true; });
+        rightButtonLandscape.addEventListener('touchend', (e) => { e.preventDefault(); isMovingRight = false; }); 
+        jumpButtonLandscape.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
+        jumpButtonLandscape.addEventListener('touchend', (e) => { e.preventDefault(); }); 
+
 
         function initializeGame() {
             createLevel(level1Data);
@@ -915,7 +972,7 @@
             playerActualHeight = playerBaseHeight;
             player.classList.remove('crouching', 'in-air', 'flipped');
             facingRight = true;
-            cameraX = 0; 
+            cameraX = 0; // Đặt lại cameraX khi khởi tạo game
 
             gameMessage.style.display = 'none'; 
 
