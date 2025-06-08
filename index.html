@@ -32,6 +32,7 @@
             touch-action: manipulation; 
             font-family: 'Roboto', sans-serif;
             color: white;
+            padding: 5px; /* THÊM PADDING AN TOÀN CHO BODY */
         }
 
         #game-container {
@@ -47,8 +48,8 @@
             transform: scale(1); 
             transition: transform 0.1s ease-out; 
             
-            max-width: 99vw; 
-            max-height: 99vh; 
+            max-width: 100%; /* Đảm bảo không vượt quá kích thước cha */
+            max-height: 100%; /* Đảm bảo không vượt quá kích thước cha */
         }
 
         #game-world {
@@ -264,7 +265,6 @@
             background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
-            /* Thêm padding để đẩy các nút vào bên trong khỏi mép màn hình */
             padding-left: 15px; /* Tăng padding */
         }
         #right-controls-area {
@@ -277,7 +277,6 @@
             background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
-            /* Thêm padding để đẩy các nút vào bên trong khỏi mép màn hình */
             padding-right: 15px; /* Tăng padding */
         }
 
@@ -294,6 +293,7 @@
                 grid-template-columns: 1fr;
             }
             #game-container {
+                /* Giữ nguyên max-width/height, việc scaling sẽ do JS xử lý */
                 max-width: 95vw;
                 max-height: 70vh; 
             }
@@ -310,7 +310,6 @@
                 font-size: 5vw; 
                 min-font-size: 26px; 
             }
-            /* ĐIỀU CHỈNH KÍCH THƯỚC THÔNG BÁO KẾT THÚC GAME CHO PORTRAIT */
             #game-message {
                 padding: 8px; 
                 font-size: 0.9em; 
@@ -335,11 +334,12 @@
             body {
                 grid-template-areas: 
                     "controls-left game-area controls-right";
-                /* Tăng kích thước tối thiểu cho cột controls để đảm bảo không gian */
-                grid-template-columns: minmax(80px, 1fr) 4fr minmax(80px, 1fr); 
+                /* Cố định kích thước cột controls, để game-area chiếm phần còn lại */
+                grid-template-columns: 110px 1fr 110px; /* Tăng lên 110px để đảm bảo không gian */
                 grid-template-rows: 1fr; 
             }
             #game-container {
+                /* Giữ nguyên max-width/height, việc scaling sẽ do JS xử lý */
                 max-width: 80vw; 
                 max-height: 98vh; 
             }
@@ -363,7 +363,6 @@
                 max-font-size: 28px;
                 min-font-size: 20px;
             }
-            /* ĐIỀU CHỈNH KÍCH THƯỚC THÔNG BÁO KẾT THÚC GAME CHO LANDSCAPE */
             #game-message {
                 padding: 12px; 
                 font-size: 1.2em; 
@@ -509,30 +508,41 @@
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
 
-            let scale = 1;
-            const viewportAspectRatio = viewportWidth / viewportHeight;
+            // Sử dụng visualViewport nếu có để có kích thước chính xác hơn trong các môi trường nhúng (như Telegram)
+            const actualViewportWidth = window.visualViewport ? window.visualViewport.width : viewportWidth;
+            const actualViewportHeight = window.visualViewport ? window.visualViewport.height : viewportHeight;
 
-            if (viewportAspectRatio > gameAspectRatio) {
-                scale = viewportHeight / gameBaseHeight;
+            let scale = 1;
+            const actualViewportAspectRatio = actualViewportWidth / actualViewportHeight;
+
+            // Tính toán scale dựa trên aspect ratio của viewport và game container
+            if (actualViewportAspectRatio > gameAspectRatio) {
+                // Viewport rộng hơn game, scale theo chiều cao
+                scale = actualViewportHeight / gameBaseHeight;
             } else {
-                scale = viewportWidth / gameBaseWidth;
+                // Viewport hẹp hơn game, scale theo chiều rộng
+                scale = actualViewportWidth / gameBaseWidth;
             }
 
+            // Giới hạn scale để game không quá nhỏ hoặc quá lớn
             scale = Math.min(scale, maxGameScale);
             scale = Math.max(scale, minGameScale);
 
+            // Điều chỉnh kích thước gameContainer dựa trên scale
             gameContainer.style.transform = `scale(${scale})`;
+            // Điều chỉnh origin để scale từ giữa
+            gameContainer.style.transformOrigin = 'center center';
             
             const mobileControlsPortrait = document.getElementById('mobile-controls');
             const mobileControlsLeftLandscape = document.getElementById('left-controls-area');
             const mobileControlsRightLandscape = document.getElementById('right-controls-area');
 
             // Kiểm tra kích thước và hướng của màn hình để hiển thị đúng bộ điều khiển
-            if (viewportWidth < 1000 && viewportWidth / viewportHeight < 1) { // Mobile dọc
+            if (actualViewportWidth < 1000 && actualViewportWidth / actualViewportHeight < 1) { // Mobile dọc
                 mobileControlsPortrait.style.display = 'flex';
                 mobileControlsLeftLandscape.style.display = 'none';
                 mobileControlsRightLandscape.style.display = 'none';
-            } else if (viewportWidth < 1000 && viewportWidth / viewportHeight >= 1) { // Mobile ngang / Tablet
+            } else if (actualViewportWidth < 1000 && actualViewportWidth / actualViewportHeight >= 1) { // Mobile ngang / Tablet
                 mobileControlsPortrait.style.display = 'none';
                 mobileControlsLeftLandscape.style.display = 'flex';
                 mobileControlsRightLandscape.style.display = 'flex';
@@ -544,6 +554,10 @@
         }
 
         window.addEventListener('resize', resizeGame);
+        // Nghe sự kiện resize của visualViewport nếu có
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', resizeGame);
+        }
 
 
         function createLevel(levelData) {
@@ -846,8 +860,8 @@
             cancelAnimationFrame(window.animationFrameId);
         }
 
-        // Camera dead zone parameters - GIẢM VÙNG CHẾT ĐỂ CAMERA NHẠY HƠN
-        const deadZoneWidth = 0.2; // 20% của gameBaseWidth. Camera sẽ cuộn khi player ra khỏi 10% trái/phải màn hình
+        // Camera dead zone parameters - GIẢM VÙNG CHẾT ĐỂ CAMERA NHẠY HƠN VÀ GIỮ PLAYER GẦN TRUNG TÂM HƠN
+        const deadZoneWidth = 0.1; // 10% của gameBaseWidth. Camera sẽ cuộn khi player ra khỏi 5% trái/phải màn hình
         const deadZoneOffset = (1 - deadZoneWidth) / 2; 
 
         function gameLoop(currentTime) {
@@ -856,6 +870,11 @@
             if (!lastFrameTime) lastFrameTime = currentTime; 
             const delta = (currentTime - lastFrameTime) / 1000; 
             lastFrameTime = currentTime;
+
+            // Kiểm tra FPS nếu delta quá lớn (FPS thấp)
+            // if (delta > 0.05) { // ví dụ: nếu delta lớn hơn 50ms, coi là giật lag
+            //     console.warn('Low FPS detected, delta:', delta);
+            // }
 
             movingObstacles.forEach(obs => {
                 const currentLeft = parseInt(obs.element.style.left);
@@ -906,8 +925,8 @@
                 cameraX += (deadZoneLeft - playerScreenX);
             } 
             // Nếu người chơi di chuyển ra khỏi vùng chết bên phải
-            else if (playerScreenX > deadZoneRight - playerActualWidth) { 
-                cameraX += (deadZoneRight - playerActualWidth - playerScreenX);
+            else if (playerScreenX + playerActualWidth > deadZoneRight) { // Thêm playerActualWidth để kiểm tra mép phải của người chơi
+                cameraX += (deadZoneRight - (playerScreenX + playerActualWidth));
             }
             
             // Giới hạn cameraX để không cuộn ra ngoài thế giới game
@@ -1022,7 +1041,7 @@
             window.animationFrameId = requestAnimationFrame(gameLoop); 
         }
 
-        // Gọi resizeGame lần đầu khi trang tải xong
+        // Gọi resizeGame lần đầu khi trang tải xong và mỗi khi cửa sổ resize (hoặc visualViewport resize)
         document.addEventListener('DOMContentLoaded', () => {
             initializeGame();
             resizeGame(); 
