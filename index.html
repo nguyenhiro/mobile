@@ -3,809 +3,711 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Xí Ngầu Tài Xỉu</title>
+    <title>Mario Đơn Giản (Sửa lỗi đứng trên platform)</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Định nghĩa biến CSS */
-        :root {
-            --primary-text-color: #fff;
-            --accent-color: #ffeb3b; /* Yellow for timer/results */
-            --button-green: #4CAF50;
-            --button-blue: #2196F3;
-            --button-orange: #FF5722;
-            --button-selected: #FFC107;
-            --button-text-selected: #333;
-            --win-color: #00FF00;
-            --lose-color: #FF0000;
-            --info-color: #FFD700;
-            --dark-background-light: rgba(255, 255, 255, 0.15);
-            --dark-background-dark: rgba(0, 0, 0, 0.3);
-            
-            /* Thêm biến cho kích thước font cơ sở để dễ điều chỉnh responsive */
-            --base-font-size: 16px;
-        }
-
-        /* HTML & Body: Đảm bảo kích thước toàn màn hình và font cơ sở */
-        html {
-            font-size: var(--base-font-size); /* Đặt font cơ sở cho REM */
-        }
-
         body {
-            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #87ceeb;
+            background-image: url('body.jpg'); /* Đường dẫn đến ảnh nền bạn muốn */
+            background-size: cover; /* Hoặc contain, hoặc 100% 100% tùy ý */
+            background-repeat: no-repeat;
+            background-position: center center;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            background: url('https://images.unsplash.com/photo-1522069213448-443a614da9b6?q=80&w=2073&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center / cover;
-            color: var(--primary-text-color);
-            padding: 1rem; /* Sử dụng REM cho padding */
-            box-sizing: border-box;
-            overflow-x: hidden;
-            position: relative;
         }
-        
-        body::before {
-            content: '';
+
+        #game-container {
+            width: 900px;
+            height: 450px;
+            border: 5px solid #333;
+            background-color: #aaddff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        #game-world {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 2500px; /* Sẽ được cập nhật bằng JS */
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.65);
-            z-index: -1;
+            transition: transform 0.1s linear;
+            background-image: url('game.jpg'); /* Đổi 'duong_dan_den_anh_nen_cua_ban.png' thành đường dẫn thực tế của ảnh */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center bottom;
         }
 
-        /* Container chính */
-        .container {
-            background-color: var(--dark-background-light); 
-            padding: 1.5rem; /* Sử dụng REM */
+        #player {
+            width: 60px;
+            height: 60px;
+            background-image: url('https://www.pngall.com/wp-content/uploads/5/Pokemon-Pikachu-PNG-High-Quality-Image.png');
+            background-size: contain;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            position: absolute;
+            image-rendering: pixelated;
+            z-index: 10;
+            /* Thêm transition cho transform để lật mượt hơn */
+            transition: transform 0.1s ease-out; 
+        }
+
+        #player.flipped {
+            transform: scaleX(-1);
+        }
+
+        .platform {
+            background-image: url('dat2.png');
+            background-size: cover;
+            background-repeat: repeat-x;
+            position: absolute;
+            height: 50px;
+            z-index: 5;
+        }
+
+        .obstacle, .hazard, .moving-obstacle {
+            background-color: #8B4513;
+            position: absolute;
+            background-image: url('khucgo.jpg');
+            background-size: cover;
+            background-repeat: repeat-x;
+            border: 2px solid #555;
+            z-index: 6;
+        }
+        .hazard {
+            background-color: #ffffff;
+            border: 2px solid #8B0000;
+            background-image: url('lua4-1.png');
+            background-size: cover;
+            background-repeat: repeat-x;
+            border: none;
+            z-index: 6;
+        }
+        .moving-obstacle {
+            background-color: #56e6ff;
+            border: 2px solid #333;
+            background-image: url('may1-1.png');
+            background-size: cover;
+            background-repeat: repeat-x;
+            z-index: 6;
+        }
+
+        #finish-line {
+            width: 30px;
+            height: 120px;
+            background-color: rgb(92, 51, 4);
+            position: absolute;
+            background-image: url('cua-cong-2.png');
+            background-size: cover;
+            background-repeat: repeat-x;
+            border: 2px dashed #000;
+            z-index: 7;
+        }
+
+        #time-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: white;
+            text-shadow: 2px 2px 3px black;
+            z-index: 20;
+        }
+
+        #game-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 30px 60px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            font-family: 'Roboto', sans-serif;
+            font-size: 2.2em;
+            display: none;
+            z-index: 100;
             text-align: center;
-            max-width: 800px;
-            width: 100%; /* Đảm bảo nó chiếm đủ chiều rộng có sẵn */
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 1.25rem; /* Sử dụng REM */
+            border: 3px solid #ffcc00;
+            text-shadow: 2px 2px 5px black;
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.6);
         }
-
-        h1 {
-            font-family: 'Press Start 2P', cursive;
-            margin-bottom: 1.5rem; /* Sử dụng REM */
-            font-size: 2.2rem; /* Sử dụng REM */
-            text-shadow: 3px 3px 8px rgba(0,0,0,0.4);
-            color: var(--accent-color);
-            letter-spacing: 2px;
-            line-height: 1.2; /* Tăng line-height cho tiêu đề lớn */
-        }
-
-        #walletInfo {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap; 
-            margin-bottom: 1rem; /* Sử dụng REM */
-            font-size: 1.1rem; /* Sử dụng REM */
+        #game-message p {
+            margin-bottom: 15px;
+            font-size: 0.8em;
             font-weight: bold;
-            background-color: var(--dark-background-light);
-            padding: 0.75rem; /* Sử dụng REM */
-            border-radius: 8px;
-            color: var(--accent-color);
-            gap: 0.5rem; /* Sử dụng REM */
         }
-        #walletInfo div {
-            padding: 0 0.3rem; /* Sử dụng REM */
-        }
-
-        .deposit-section, .bet-input-section {
-            margin-bottom: 1.5rem; /* Sử dụng REM */
-            padding: 1rem; /* Sử dụng REM */
-            background-color: var(--dark-background-dark); 
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.6rem; /* Sử dụng REM */
-            flex-wrap: wrap;
-        }
-        .deposit-section label, .bet-input-section label {
-            font-weight: bold;
-            font-size: 1rem; /* Đảm bảo font size nhất quán */
-        }
-        .deposit-section button {
-            padding: 0.6rem 1rem; /* Sử dụng REM */
-            font-size: 1rem; /* Sử dụng REM */
-            background-color: var(--button-green);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.2s;
-        }
-        .deposit-section button:hover {
-            background-color: #388e3c;
-            transform: scale(1.03);
-        }
-        .deposit-section button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        .bet-input-section input {
-            padding: 0.6rem; /* Sử dụng REM */
-            border-radius: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background-color: rgba(0, 0, 0, 0.3);
-            color: var(--primary-text-color);
-            font-size: 1rem; /* Sử dụng REM */
-            width: 80px; /* Chiều rộng tương đối */
-            max-width: 120px; /* Giới hạn chiều rộng tối đa */
-            text-align: center;
-        }
-        .bet-input-section input:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 5px var(--accent-color);
-        }
-        
-        #timerDisplay {
-            font-size: 1.5rem; /* Sử dụng REM */
-            margin-bottom: 1.25rem; /* Sử dụng REM */
-            color: var(--accent-color);
-        }
-
-        .bet-options {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem; /* Sử dụng REM */
-            margin-bottom: 1.75rem; /* Sử dụng REM */
-        }
-
-        .bet-group {
-            display: flex;
-            justify-content: center;
-            gap: 0.75rem; /* Sử dụng REM */
-            flex-wrap: wrap;
-        }
-
-        .bet-button {
-            padding: 1rem 1.2rem; /* Sử dụng REM */
-            font-size: 1.05rem; /* Sử dụng REM */
-            font-weight: bold;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            background-color: var(--button-green);
-            color: var(--primary-text-color);
-            transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
-            flex: 1; /* Cho phép các nút co giãn */
-            min-width: 110px; /* Giảm min-width cho màn hình nhỏ hơn */
-            max-width: 150px; /* Giới hạn max-width */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-        .bet-button.selected {
-            background-color: var(--button-selected);
-            color: var(--button-text-selected);
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-        .bet-button:not(.selected):hover {
-            transform: scale(1.03);
-            background-color: #388e3c;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25);
-        }
-
-        .bet-button[data-bet-type="tai"],
-        .bet-button[data-bet-type="xiu"] {
-            flex-basis: 48%; /* Cho phép chiếm gần một nửa */
-            max-width: 200px;
-        }
-
-        .single-number-bets .bet-button {
-            background-color: var(--button-blue);
-            flex-basis: 15%; /* Giữ nguyên nhưng đảm bảo min-width đủ lớn */
-            min-width: 50px; /* Giảm min-width cho điện thoại */
-            max-width: 70px; /* Giới hạn max-width */
-        }
-        .single-number-bets .bet-button:not(.selected):hover {
-            background-color: #1976D2;
-        }
-
-        #diceResult {
-            font-size: 3.5rem; /* Sử dụng REM */
-            font-weight: bold;
-            margin: 1.5rem 0; /* Sử dụng REM */
-            min-height: 90px; /* Giảm min-height */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent-color);
-            text-shadow: 3px 3px 8px rgba(0,0,0,0.4);
-        }
-
-        .dice-face {
-            width: 80px; /* Giảm kích thước xí ngầu */
-            height: 80px; /* Giảm kích thước xí ngầu */
-            background-color: #eee;
-            border: 5px solid #333; /* Giảm độ dày viền */
-            border-radius: 15px; /* Giảm border-radius */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem; /* Giảm font size của số trên xí ngầu */
-            color: #333;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.4); /* Giảm box-shadow */
-            transition: transform 0.3s ease-out;
-        }
-        @keyframes diceSpin {
-            0% { transform: rotate(0deg) scale(0.8); opacity: 0.5; }
-            50% { transform: rotate(180deg) scale(1.1); opacity: 1; }
-            100% { transform: rotate(360deg) scale(0.8); opacity: 0.5; }
-        }
-        .spinning {
-            animation: diceSpin 0.5s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
-
-        #message {
-            font-size: 1.1rem; /* Sử dụng REM */
-            margin-top: 1rem; /* Sử dụng REM */
-            font-weight: bold;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-        }
-
-        #playAgainBtn {
-            padding: 0.8rem 1.5rem; /* Sử dụng REM */
-            font-size: 1.1rem; /* Sử dụng REM */
-            background-color: var(--button-orange);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 1.5rem; /* Sử dụng REM */
-            transition: background-color 0.2s, transform 0.2s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        #playAgainBtn:hover {
-            background-color: #e64a19;
-            transform: scale(1.05);
-        }
-        #playAgainBtn:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        /* Lịch sử đặt cược */
-        #historySection {
-            margin-top: 1.25rem; /* Sử dụng REM */
-            background-color: var(--dark-background-dark);
-            padding: 1.25rem; /* Sử dụng REM */
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            text-align: left;
-            max-height: 250px; /* Giảm max-height */
-            overflow-y: auto; 
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            max-width: 800px;
-            width: 100%;
-        }
-        #historySection h2 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 1.2rem; /* Sử dụng REM */
-            color: var(--accent-color);
-            margin-bottom: 1rem; /* Sử dụng REM */
-            text-align: center;
-        }
-        #betHistory {
+        #game-message ul {
             list-style: none;
             padding: 0;
-            margin: 0;
+            margin-top: 10px;
+            font-size: 0.6em;
+            max-height: 100px;
+            overflow-y: auto;
+            border-top: 1px dashed rgba(255,255,255,0.3);
+            padding-top: 10px;
         }
-        #betHistory li {
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 0.75rem; /* Sử dụng REM */
-            margin-bottom: 0.5rem; /* Sử dụng REM */
-            border-radius: 5px;
-            font-size: 0.9rem; /* Sử dụng REM */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap; /* Cho phép wrap trên màn hình nhỏ */
-            gap: 0.5rem; /* Khoảng cách giữa các phần tử trong li */
-        }
-        #betHistory li span {
-            /* Loại bỏ margin-right cố định để flexbox tự quản lý */
-            margin-right: 0; 
-        }
-        #betHistory li .bet-detail {
-            font-weight: bold;
-            color: #FFD700;
-        }
-        #betHistory li .result-detail {
-            color: var(--primary-text-color);
-        }
-        #betHistory li .win-loss {
-            font-weight: bold;
-            padding: 0.15rem 0.3rem; /* Sử dụng REM */
-            border-radius: 3px;
-            white-space: nowrap; /* Giữ nguyên dòng cho trạng thái thắng/thua */
-        }
-        #betHistory li .win {
-            color: var(--win-color);
-        }
-        #betHistory li .lose {
-            color: var(--lose-color);
+        #game-message li {
+            margin-bottom: 3px;
         }
 
-        /* ======================================= */
-        /* MEDIA QUERIES cho các kích thước màn hình */
-        /* ======================================= */
-
-        /* Cho màn hình nhỏ hơn 768px (điện thoại, máy tính bảng dọc) */
-        @media (max-width: 768px) {
-            :root {
-                --base-font-size: 14px; /* Giảm font cơ sở */
-            }
-
-            h1 {
-                font-size: 1.8rem; /* Giảm kích thước tiêu đề */
-                margin-bottom: 1.2rem;
-            }
-
-            .container {
-                padding: 1rem; /* Giảm padding tổng thể */
-                margin-bottom: 1rem;
-            }
-
-            #walletInfo {
-                flex-direction: column; /* Xếp thông tin ví theo cột */
-                align-items: center;
-                gap: 0.3rem; /* Giảm khoảng cách */
-                font-size: 1rem;
-            }
-
-            .deposit-section, .bet-input-section {
-                flex-direction: column; /* Xếp các phần tử theo cột */
-                gap: 0.5rem; /* Giảm khoảng cách */
-                padding: 0.8rem;
-            }
-            .deposit-section label, .bet-input-section label {
-                margin-bottom: 0.2rem; /* Thêm khoảng cách nếu cần */
-            }
-            .bet-input-section input {
-                width: 100%; /* Chiếm toàn bộ chiều rộng có sẵn */
-                max-width: 150px; /* Nhưng vẫn giới hạn tối đa */
-            }
-
-            #timerDisplay {
-                font-size: 1.3rem;
-                margin-bottom: 1rem;
-            }
-
-            .bet-group {
-                gap: 0.5rem; /* Giảm khoảng cách giữa các nút cược */
-            }
-
-            .bet-button {
-                padding: 0.8rem 1rem; /* Giảm padding nút cược */
-                font-size: 0.9rem; /* Giảm font size nút cược */
-                min-width: unset; /* Bỏ min-width để flex:1 hoạt động linh hoạt hơn */
-                flex-basis: 48%; /* Cho phép hai cột */
-            }
-            .single-number-bets .bet-button {
-                flex-basis: calc(33.33% - 0.5rem); /* 3 cột cho số đơn */
-                min-width: unset;
-                max-width: unset;
-            }
-
-            #diceResult {
-                font-size: 3rem; /* Giảm kích thước kết quả xí ngầu */
-                margin: 1.2rem 0;
-                min-height: 70px;
-            }
-            .dice-face {
-                width: 70px; /* Giảm kích thước xí ngầu */
-                height: 70px;
-                font-size: 2.5rem; /* Giảm font số trên xí ngầu */
-                border-width: 4px; /* Giảm độ dày viền */
-            }
-
-            #message {
-                font-size: 0.95rem;
-                margin-top: 0.8rem;
-            }
-
-            #playAgainBtn {
-                padding: 0.7rem 1.2rem;
-                font-size: 1rem;
-                margin-top: 1rem;
-            }
-
-            #historySection {
-                padding: 1rem;
-                max-height: 200px; /* Giảm max-height cho lịch sử */
-            }
-            #historySection h2 {
-                font-size: 1.1rem;
-                margin-bottom: 0.8rem;
-            }
-            #betHistory li {
-                font-size: 0.85rem;
-                padding: 0.6rem;
-                flex-direction: column; /* Xếp lịch sử theo cột trên màn hình siêu nhỏ */
-                align-items: flex-start;
-                gap: 0.3rem;
-            }
-            #betHistory li .win-loss {
-                align-self: flex-end; /* Di chuyển thắng thua sang phải */
-            }
+        #reset-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.2s, transform 0.2s;
+            font-family: 'Roboto', sans-serif;
         }
-
-        /* Cho màn hình cực nhỏ (điện thoại cũ, dưới 480px) */
-        @media (max-width: 480px) {
-            :root {
-                --base-font-size: 12px; /* Giảm font cơ sở hơn nữa */
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .container {
-                padding: 0.8rem;
-            }
-
-            .bet-button {
-                flex-basis: 100%; /* Mỗi nút cược chiếm 1 dòng */
-                max-width: 100%;
-            }
-            .bet-button[data-bet-type="tai"],
-            .bet-button[data-bet-type="xiu"] {
-                flex-basis: 100%;
-            }
-            .single-number-bets .bet-button {
-                flex-basis: calc(33.33% - 0.4rem); /* Vẫn cố gắng giữ 3 cột nếu không quá chật */
-            }
-
-            #diceResult {
-                font-size: 2.5rem;
-            }
-            .dice-face {
-                width: 60px;
-                height: 60px;
-                font-size: 2rem;
-            }
-            
-            #betHistory li {
-                font-size: 0.8rem;
-                padding: 0.5rem;
-            }
-        }
-
-        /* Cho màn hình lớn (trên 1200px, máy tính để bàn lớn) */
-        @media (min-width: 1200px) {
-            :root {
-                --base-font-size: 18px; /* Tăng font cơ sở */
-            }
-            .container {
-                max-width: 960px; /* Giới hạn rộng hơn một chút */
-            }
-            h1 {
-                font-size: 2.8rem;
-            }
-            #walletInfo {
-                font-size: 1.3rem;
-            }
-            .bet-button {
-                font-size: 1.2rem;
-                padding: 1.2rem 1.5rem;
-            }
-            #diceResult {
-                font-size: 4.5rem;
-            }
-            .dice-face {
-                width: 100px;
-                height: 100px;
-                font-size: 4rem;
-            }
-            #message {
-                font-size: 1.6rem;
-            }
-            #playAgainBtn {
-                font-size: 1.3rem;
-            }
-            #historySection h2 {
-                font-size: 1.8rem;
-            }
-            #betHistory li {
-                font-size: 1rem;
-            }
+        #reset-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎲 Game Xí Ngầu Tài Xỉu 🎲</h1>
-        
-        <div id="walletInfo">
-            <div>Xu của bạn: <span id="currentBalance">1000</span></div>
-            <div>Tổng cược hệ thống: <span id="systemBalance">1,000,000</span></div>
+    <div id="game-container">
+        <div id="game-world">
+            <div id="player"></div>
+            <div id="finish-line"></div>
         </div>
-        
-        <div class="deposit-section">
-            <label>Nạp 1000 xu:</label>
-            <button id="depositBtn">Nhận Xu</button>
-        </div>
-
-        <div class="bet-input-section">
-            <label for="betAmount">Đặt cược:</label>
-            <input type="number" id="betAmount" value="100" min="1">
-        </div>
-
-        <div id="timerDisplay">Thời gian đặt cược: 10s</div>
-        
-        <div class="bet-options">
-            <div class="bet-group">
-                <button class="bet-button" data-bet-type="tai" data-numbers="4,5,6">Tài (4-5-6)</button>
-                <button class="bet-button" data-bet-type="xiu" data-numbers="1,2,3">Xỉu (1-2-3)</button>
-            </div>
-            <div class="single-number-bets bet-group">
-                <button class="bet-button" data-bet-type="number" data-numbers="1">1</button>
-                <button class="bet-button" data-bet-type="number" data-numbers="2">2</button>
-                <button class="bet-button" data-bet-type="number" data-numbers="3">3</button>
-                <button class="bet-button" data-bet-type="number" data-numbers="4">4</button>
-                <button class="bet-button" data-bet-type="number" data-numbers="5">5</button>
-                <button class="bet-button" data-bet-type="number" data-numbers="6">6</button>
-            </div>
-        </div>
-
-        <div id="diceResult">Hãy đặt cược!</div>
-        <div id="message"></div>
-        <button id="playAgainBtn" style="display: none;">Chơi Lại</button>
     </div>
 
-    <div id="historySection" class="container">
-        <h2>Lịch Sử Đặt Cược</h2>
-        <ul id="betHistory">
-            </ul>
+    <div id="time-display">Thời gian: 00:00</div>
+    <div id="game-message">
+        <p>Bạn đã chiến thắng!</p>
+        <button id="reset-button">Chơi Lại</button>
     </div>
 
     <script>
-        const timerDisplay = document.getElementById('timerDisplay');
-        const diceResultDisplay = document.getElementById('diceResult');
-        const messageDisplay = document.getElementById('message');
-        const playAgainBtn = document.getElementById('playAgainBtn');
-        const betButtons = document.querySelectorAll('.bet-button');
-        
-        const currentBalanceDisplay = document.getElementById('currentBalance');
-        const systemBalanceDisplay = document.getElementById('systemBalance');
-        const depositBtn = document.getElementById('depositBtn');
-        const betAmountInput = document.getElementById('betAmount');
-        const betHistoryList = document.getElementById('betHistory');
+        const player = document.getElementById('player');
+        const gameContainer = document.getElementById('game-container');
+        const gameWorld = document.getElementById('game-world');
+        const finishLine = document.getElementById('finish-line');
+        const gameMessage = document.getElementById('game-message');
+        const timeDisplay = document.getElementById('time-display');
 
-        // Lấy các giá trị màu từ CSS để dùng trong JS
-        const winColor = getComputedStyle(document.documentElement).getPropertyValue('--win-color');
-        const loseColor = getComputedStyle(document.documentElement).getPropertyValue('--lose-color');
-        const infoColor = getComputedStyle(document.documentElement).getPropertyValue('--info-color');
-
-        let currentBalance = 1000; 
-        let systemBalance = 1000000; 
-        let timeLeft = 10;
+        let startTime = 0;
+        let elapsedTime = 0;
         let timerInterval;
-        let selectedBet = null; 
-        let selectedNumbers = []; 
-        let currentBetAmount = 0; 
 
-        // Cập nhật hiển thị số xu trong ví
-        function updateWalletDisplay() {
-            currentBalanceDisplay.textContent = currentBalance.toLocaleString();
-            systemBalanceDisplay.textContent = systemBalance.toLocaleString();
-        }
+        let winHistory = JSON.parse(localStorage.getItem('gameWinHistory')) || [];
 
-        // Xử lý nạp 1000 xu mỗi lần nhấn
-        depositBtn.addEventListener('click', () => {
-            currentBalance += 1000;
-            updateWalletDisplay();
-            messageDisplay.textContent = `Bạn đã nhận 1000 xu! Tổng xu: ${currentBalance.toLocaleString()}`;
-            messageDisplay.style.color = infoColor;
-        });
+        let playerX = 50;
+        let playerY = 0;
+        const playerBaseWidth = 60;
+        const playerBaseHeight = 60;
+        let playerActualWidth = playerBaseWidth;
+        let playerActualHeight = playerBaseHeight;
 
-        // Hàm khởi tạo hoặc chơi lại game
-        function initializeGame() {
-            clearInterval(timerInterval); 
-            timeLeft = 10;
-            selectedBet = null;
-            selectedNumbers = [];
-            currentBetAmount = 0; 
-            messageDisplay.textContent = '';
-            diceResultDisplay.innerHTML = 'Hãy đặt cược!';
-            playAgainBtn.style.display = 'none'; 
-            playAgainBtn.disabled = true;
+        const hitboxXOffset = 10; // Khoảng cách từ cạnh player đến hitbox (ngang)
+        const hitboxYOffset = 5; // Khoảng cách từ đáy player đến hitbox (dọc)
 
-            betButtons.forEach(button => {
-                button.classList.remove('selected');
-                button.disabled = false; 
-            });
-            depositBtn.disabled = false; 
-            betAmountInput.disabled = false; 
+        const deathFallThreshold = -100; // Ngưỡng rơi vực
 
-            updateWalletDisplay(); 
-            startBettingPhase();
-        }
+        let isJumping = false;
+        let isMovingLeft = false;
+        let isMovingRight = false;
+        let isGameOver = false;
+        let isOnPlatform = false; // Biến global để xác định có đang đứng trên platform hay không
 
-        // Bắt đầu giai đoạn đặt cược
-        function startBettingPhase() {
-            timerDisplay.textContent = `Thời gian đặt cược: ${timeLeft}s`;
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                timerDisplay.textContent = `Thời gian đặt cược: ${timeLeft}s`;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    endBettingPhase();
+        const moveAcceleration = 1.2;
+        const friction = 0.8;
+        const maxSpeed = 6;
+        const jumpStrength = 14;
+        const gravity = 0.6;
+        let xVelocity = 0;
+        let yVelocity = 0;
+
+        let cameraX = 0;
+        let facingRight = true;
+
+        let lastFrameTime = 0;
+        const targetFPS = 60;
+        // const frameInterval = 1000 / targetFPS; // Không cần dùng trực tiếp, dùng delta thời gian
+
+        let gameElements = [];
+        let movingObstacles = [];
+
+        function createLevel(levelData) {
+            // Xóa bỏ các phần tử cũ trước khi tạo level mới
+            gameElements.forEach(el => el.remove());
+            gameElements = [];
+            movingObstacles = [];
+
+            finishLine.style.left = levelData.finishLine.left + 'px';
+            finishLine.style.bottom = levelData.finishLine.bottom + 'px';
+            finishLine.style.width = levelData.finishLine.width + 'px';
+            finishLine.style.height = levelData.finishLine.height + 'px';
+
+            levelData.elements.forEach(data => {
+                const el = document.createElement('div');
+                el.classList.add(data.type);
+                el.style.left = data.left + 'px';
+                el.style.bottom = data.bottom + 'px';
+                el.style.width = data.width + 'px';
+                el.style.height = data.height + 'px';
+                gameWorld.appendChild(el);
+                gameElements.push(el);
+
+                if (data.type === 'moving-obstacle') {
+                    movingObstacles.push({
+                        element: el,
+                        initialLeft: data.left,
+                        range: data.range,
+                        speed: data.speed,
+                        direction: 1 // 1: sang phải, -1: sang trái
+                    });
                 }
-            }, 1000);
+            });
         }
 
-        // Kết thúc giai đoạn đặt cược và chuẩn bị đổ xí ngầu
-        function endBettingPhase() {
-            betButtons.forEach(button => { button.disabled = true; });
-            depositBtn.disabled = true;
-            betAmountInput.disabled = true;
+        const level1Data = {
+            worldWidth: 2500,
+            finishLine: { left: 2450, bottom: 50, width: 30, height: 120 },
+            elements: [
+                { type: 'platform', left: 0, width: 200, height: 50, bottom: 0 },
+                { type: 'platform', left: 300, width: 100, height: 50, bottom: 0 },
+                { type: 'platform', left: 500, width: 150, height: 50, bottom: 0 },
+                { type: 'platform', left: 750, width: 120, height: 50, bottom: 80 },
+                { type: 'platform', left: 950, width: 100, height: 50, bottom: 0 },
+                { type: 'platform', left: 1150, width: 180, height: 50, bottom: 0 },
+                { type: 'platform', left: 1400, width: 100, height: 50, bottom: 120 },
+                { type: 'platform', left: 1600, width: 150, height: 50, bottom: 0 },
+                { type: 'platform', left: 1850, width: 150, height: 50, bottom: 0 },
+                { type: 'platform', left: 2100, width: 200, height: 50, bottom: 0 },
+                { type: 'platform', left: 2400, width: 100, height: 50, bottom: 0 },
 
-            currentBetAmount = parseInt(betAmountInput.value);
+                { type: 'obstacle', left: 150, width: 50, height: 30, bottom: 50 },
+                { type: 'obstacle', left: 550, width: 70, height: 60, bottom: 50 },
+                { type: 'obstacle', left: 800, width: 50, height: 30, bottom: 130 },
+                { type: 'obstacle', left: 1450, width: 50, height: 40, bottom: 170 },
+                { type: 'obstacle', left: 1650, width: 80, height: 70, bottom: 50 },
+                { type: 'obstacle', left: 2200, width: 50, height: 50, bottom: 50 },
 
-            if (selectedBet === null) {
-                messageDisplay.textContent = 'Bạn chưa chọn cửa đặt cược! Không có cược nào được thực hiện.';
-                messageDisplay.style.color = infoColor;
-                playAgainBtn.style.display = 'block';
-                playAgainBtn.disabled = false;
-                return;
-            }
+                { type: 'hazard', left: 350, width: 30, height: 15, bottom: 50 },
+                { type: 'hazard', left: 1000, width: 60, height: 15, bottom: 50 },
+                { type: 'hazard', left: 1950, width: 40, height: 20, bottom: 50 },
 
-            if (isNaN(currentBetAmount) || currentBetAmount <= 0) {
-                messageDisplay.textContent = `Vui lòng nhập số xu muốn đặt cược hợp lệ (lớn hơn 0).`;
-                messageDisplay.style.color = infoColor;
-                playAgainBtn.style.display = 'block';
-                playAgainBtn.disabled = false;
-                return;
-            }
-            
-            if (currentBetAmount > currentBalance) {
-                messageDisplay.textContent = `Bạn không đủ xu để đặt ${currentBetAmount.toLocaleString()} xu! Số xu hiện có: ${currentBalance.toLocaleString()}.`;
-                messageDisplay.style.color = loseColor;
-                playAgainBtn.style.display = 'block';
-                playAgainBtn.disabled = false;
-                return;
-            }
-            
-            currentBalance -= currentBetAmount;
-            updateWalletDisplay();
-            messageDisplay.textContent = `Đã đặt ${currentBetAmount.toLocaleString()} xu. Chờ kết quả...`;
-            messageDisplay.style.color = infoColor;
+                { type: 'moving-obstacle', left: 600, width: 60, height: 40, bottom: 100, range: 100, speed: 1.5 },
+                { type: 'moving-obstacle', left: 1250, width: 80, height: 50, bottom: 50, range: 150, speed: 1.2 },
+                { type: 'moving-obstacle', left: 1700, width: 50, height: 30, bottom: 100, range: 80, speed: 2 }
+            ]
+        };
 
-            rollDice();
+        function updateTimer() {
+            if (isGameOver) return;
+            elapsedTime = performance.now() - startTime;
+            const minutes = Math.floor(elapsedTime / 60000);
+            const seconds = Math.floor((elapsedTime % 60000) / 1000);
+            const milliseconds = Math.floor((elapsedTime % 1000) / 10);
+            timeDisplay.textContent = `Thời gian: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(2, '0')}`;
         }
 
-        // Xử lý khi người chơi chọn cược
-        function selectBet(event) {
-            if (timeLeft <= 0 || currentBalance <= 0) {
-                messageDisplay.textContent = `Hãy Nạp Xu hoặc chờ vòng mới để đặt cược!`;
-                messageDisplay.style.color = infoColor;
-                return;
+        function updatePlayerPosition() {
+            player.style.left = playerX + 'px';
+            player.style.bottom = playerY + 'px';
+
+            if (xVelocity < 0 && facingRight) {
+                player.classList.add('flipped');
+                facingRight = false;
+            } else if (xVelocity > 0 && !facingRight) {
+                player.classList.remove('flipped');
+                facingRight = true;
+            }
+        }
+
+        function jump() {
+            // Chỉ cho phép nhảy khi đang đứng trên platform
+            if (isOnPlatform) { 
+                isJumping = true;
+                yVelocity = jumpStrength;
+                isOnPlatform = false; // Khi nhảy, không còn trên platform nữa
+            }
+        }
+
+        function getElementRect(element) {
+            // Lấy vị trí và kích thước thực tế của phần tử trong game-world
+            const left = parseInt(element.style.left);
+            const bottom = parseInt(element.style.bottom);
+            const width = parseInt(element.style.width); // Dùng style.width thay vì offsetWidth
+            const height = parseInt(element.style.height); // Dùng style.height thay vì offsetHeight
+            const right = left + width;
+            const top = bottom + height;
+            return { left, right, bottom, top, width, height };
+        }
+
+        function checkCollisionsX() {
+            if (isGameOver) return; // Không kiểm tra va chạm nếu game over
+            
+            const playerHitbox = {
+                left: playerX + hitboxXOffset,
+                right: playerX + playerActualWidth - hitboxXOffset,
+                bottom: playerY + hitboxYOffset,
+                top: playerY + playerActualHeight
+            };
+
+            gameElements.forEach(element => {
+                const elementRect = getElementRect(element);
+
+                const horizontalOverlap = playerHitbox.left < elementRect.right && playerHitbox.right > elementRect.left;
+                const verticalOverlap = playerHitbox.top > elementRect.bottom && playerHitbox.bottom < elementRect.top;
+
+                if (horizontalOverlap && verticalOverlap) {
+                    if (element.classList.contains('hazard')) {
+                        endGame('Bạn đã chạm chướng ngại vật nguy hiểm!');
+                        return; // Thoát khỏi vòng lặp forEach nếu game over
+                    }
+
+                    if (element.classList.contains('obstacle') || element.classList.contains('moving-obstacle')) {
+                        // Xử lý va chạm ngang với chướng ngại vật/vật cản di chuyển
+                        if (xVelocity > 0) { // Đang di chuyển sang phải
+                            playerX = elementRect.left - (playerActualWidth - hitboxXOffset); // Đặt player sát bên trái vật cản
+                            xVelocity = 0;
+                        } else if (xVelocity < 0) { // Đang di chuyển sang trái
+                            playerX = elementRect.right - hitboxXOffset; // Đặt player sát bên phải vật cản
+                            xVelocity = 0;
+                        }
+                    }
+                }
+            });
+        }
+        
+        function checkCollisionsY(previousPlayerY) {
+            if (isGameOver) return; // Không kiểm tra va chạm nếu game over
+
+            let playerCurrentlyOnPlatform = false;
+            let highestPlatformY = -Infinity; // Khởi tạo với giá trị cực kỳ thấp
+
+            const playerHitbox = {
+                left: playerX + hitboxXOffset,
+                right: playerX + playerActualWidth - hitboxXOffset,
+                bottom: playerY + hitboxYOffset,
+                top: playerY + playerActualHeight
+            };
+            
+            // Va chạm từ dưới lên (đụng trần)
+            if (yVelocity > 0) { // Chỉ kiểm tra khi đang bay lên
+                gameElements.forEach(element => {
+                    if (element.classList.contains('platform') || element.classList.contains('obstacle') || element.classList.contains('moving-obstacle')) {
+                        const elementRect = getElementRect(element);
+
+                        const horizontalOverlap = (playerHitbox.right > elementRect.left && playerHitbox.left < elementRect.right);
+                        
+                        // Kiểm tra nếu đỉnh của player cũ ở dưới đáy của platform và đỉnh mới sẽ vượt qua đáy platform
+                        if (horizontalOverlap && 
+                            (previousPlayerY + playerActualHeight) <= elementRect.bottom && 
+                            (playerY + playerActualHeight) > elementRect.bottom) 
+                        {
+                            playerY = elementRect.bottom - playerActualHeight; // Đặt player ngay dưới đáy của vật cản
+                            yVelocity = 0; // Đảo ngược vận tốc Y
+                            isJumping = true; // Vẫn tính là đang nhảy nếu bị chặn
+                        }
+                    }
+                });
             }
 
-            betButtons.forEach(button => {
-                button.classList.remove('selected');
+            // Va chạm từ trên xuống (đứng trên platform) và rơi vực
+            // Sau khi đã xử lý va chạm trần (để tránh bị đẩy xuống ngay lập tức sau khi nhảy)
+            gameElements.forEach(element => {
+                if (element.classList.contains('platform') || element.classList.contains('obstacle') || element.classList.contains('moving-obstacle')) {
+                    const elementRect = getElementRect(element);
+
+                    const horizontalOverlap = (playerHitbox.right > elementRect.left && playerHitbox.left < elementRect.right);
+
+                    // Điều kiện đứng trên platform:
+                    // 1. Va chạm ngang
+                    // 2. Player đang rơi hoặc đứng yên (yVelocity <= 0)
+                    // 3. Đáy hitbox CŨ của player nằm TRÊN hoặc BẰNG đỉnh platform
+                    // 4. Đáy hitbox MỚI của player nằm DƯỚI hoặc BẰNG đỉnh platform
+                    if (horizontalOverlap && 
+                        yVelocity <= 0 && 
+                        (previousPlayerY + hitboxYOffset) >= elementRect.top && // Chân cũ trên hoặc bằng đỉnh platform
+                        (playerY + hitboxYOffset) <= elementRect.top) // Chân mới nằm dưới hoặc bằng đỉnh platform
+                    {
+                        if (element.classList.contains('hazard')) {
+                            endGame('Bạn đã chạm chướng ngại vật nguy hiểm!');
+                            return; 
+                        }
+
+                        // Nếu tìm thấy một platform hợp lệ để đứng, cập nhật highestPlatformY
+                        // Lấy platform cao nhất mà player có thể đứng lên
+                        if (elementRect.top > highestPlatformY) {
+                            highestPlatformY = elementRect.top;
+                            playerCurrentlyOnPlatform = true;
+                        }
+                    }
+                }
             });
 
-            const clickedButton = event.target;
-            clickedButton.classList.add('selected');
-
-            selectedBet = clickedButton.dataset.betType;
-            selectedNumbers = clickedButton.dataset.numbers.split(',').map(Number); 
-            
-            messageDisplay.textContent = `Bạn đã chọn: ${clickedButton.textContent}. Hãy nhập số xu và chờ thời gian đếm ngược.`;
-            messageDisplay.style.color = infoColor;
-        }
-
-        // Quay và hiển thị kết quả xí ngầu
-        function rollDice() {
-            timerDisplay.textContent = 'Kết quả xí ngầu:';
-            diceResultDisplay.innerHTML = '<div class="dice-face spinning"></div>'; 
-
-            setTimeout(() => {
-                const result = Math.floor(Math.random() * 6) + 1; 
-                diceResultDisplay.innerHTML = `<div class="dice-face">${result}</div>`; 
-
-                checkResult(result);
-                playAgainBtn.style.display = 'block';
-                playAgainBtn.disabled = false;
-            }, 3000); 
-        }
-
-        // Kiểm tra kết quả và thông báo thắng/thua
-        function checkResult(diceResult) {
-            let isWinner = false;
-            let currentBetText = 'chưa đặt cược'; 
-            let winnings = 0; // Số xu người chơi nhận được (gốc + lãi)
-            let systemProfit = 0; // Số xu hệ thống lãi/lỗ từ lượt này
-
-            const selectedButtonElement = Array.from(betButtons).find(btn => btn.classList.contains('selected'));
-            if (selectedButtonElement) {
-                currentBetText = selectedButtonElement.textContent;
+            // Sau khi duyệt qua tất cả các phần tử, mới quyết định vị trí Y cuối cùng
+            if (playerCurrentlyOnPlatform) {
+                playerY = highestPlatformY - hitboxYOffset;
+                yVelocity = 0;
+                isJumping = false;
+            } else {
+                // Nếu không tìm thấy platform nào bên dưới, player đang rơi tự do, áp dụng trọng lực
+                yVelocity -= gravity; // Trọng lực áp dụng ở đây
             }
+            
+            isOnPlatform = playerCurrentlyOnPlatform; // Cập nhật biến global isOnPlatform
 
-            if (currentBetAmount === 0 || selectedBet === null) {
+            // Kiểm tra rơi xuống vực cuối cùng
+            if (playerY + hitboxYOffset < deathFallThreshold && !isGameOver) { 
+                endGame('Bạn đã rơi xuống vực!');
                 return; 
             }
+        }
 
-            let winMultiplier = 0; 
 
-            if (selectedBet === 'tai' && diceResult >= 4 && diceResult <= 6) {
-                isWinner = true;
-                winMultiplier = 2; // Ăn 100% (gấp đôi số đặt)
-            } else if (selectedBet === 'xiu' && diceResult >= 1 && diceResult <= 3) {
-                isWinner = true;
-                winMultiplier = 2; // Ăn 100% (gấp đôi số đặt)
-            } else if (selectedBet === 'number' && selectedNumbers.includes(diceResult)) {
-                isWinner = true;
-                winMultiplier = 5; // Ăn 500% (gấp 5 lần số đặt)
+        function checkWin() {
+            if (isGameOver) return; // Không kiểm tra win nếu game over
+
+            const finishLineRect = getElementRect(finishLine);
+
+            const playerHitbox = {
+                left: playerX + hitboxXOffset,
+                right: playerX + playerActualWidth - hitboxXOffset,
+                bottom: playerY + hitboxYOffset,
+                top: playerY + playerActualHeight
+            };
+
+            if (playerHitbox.left < finishLineRect.right &&
+                playerHitbox.right > finishLineRect.left &&
+                playerHitbox.bottom < finishLineRect.top &&
+                playerHitbox.top > finishLineRect.bottom ) {
+
+                endGame('Bạn đã chiến thắng!');
+            }
+        }
+
+        function endGame(message) {
+            isGameOver = true;
+            clearInterval(timerInterval);
+
+            let finalMessage = `<p>${message}</p>`;
+            let newRecord = false;
+
+            if (message.includes('chiến thắng')) {
+                const finalTime = elapsedTime;
+                winHistory.push(finalTime);
+                winHistory.sort((a, b) => a - b);
+                // Giới hạn lịch sử chỉ giữ 5 kỷ lục tốt nhất
+                if (winHistory.length > 5) {
+                    winHistory = winHistory.slice(0, 5);
+                }
+                localStorage.setItem('gameWinHistory', JSON.stringify(winHistory));
+
+                const minutes = Math.floor(finalTime / 60000);
+                const seconds = Math.floor((elapsedTime % 60000) / 1000);
+                const milliseconds = Math.floor((elapsedTime % 1000) / 10);
+                const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(2, '0')}`;
+
+                finalMessage += `<p>Thời gian của bạn: ${formattedTime}</p>`;
+
+                // Check for new record by comparing with the best time in history
+                if (winHistory.length > 0 && finalTime === winHistory[0]) {
+                    newRecord = true;
+                }
+
+                if (newRecord) {
+                    finalMessage += `<p>Kỷ lục mới!</p>`;
+                }
             }
 
-            if (isWinner) {
-                winnings = currentBetAmount * winMultiplier;
-                currentBalance += winnings; 
-                systemProfit = currentBetAmount - winnings; // Nếu người chơi thắng, hệ thống bị lỗ (số âm)
-                
-                messageDisplay.textContent = `🎉 Bạn đã chiến thắng ${winnings.toLocaleString()} xu! Tổng xu: ${currentBalance.toLocaleString()}. Kết quả: ${diceResult}.`;
-                messageDisplay.style.color = winColor;
-                addHistoryEntry(currentBetText, currentBetAmount, diceResult, 'Thắng', winnings);
+            finalMessage += '<p>Lịch sử chiến thắng:</p><ul>';
+            if (winHistory.length === 0) {
+                finalMessage += '<li>Chưa có kỷ lục nào.</li>';
             } else {
-                systemProfit = currentBetAmount; // Nếu người chơi thua, hệ thống lãi số tiền người chơi đặt
-                
-                messageDisplay.textContent = `😢 Bạn đã thua ${currentBetAmount.toLocaleString()} xu. Kết quả: ${diceResult}. Bạn đã đặt cược vào: ${currentBetText}. Số xu còn lại: ${currentBalance.toLocaleString()}.`;
-                messageDisplay.style.color = loseColor;
-                addHistoryEntry(currentBetText, currentBetAmount, diceResult, 'Thua', -currentBetAmount); 
+                winHistory.forEach((time, index) => {
+                    const minutes = Math.floor(time / 60000);
+                    const seconds = Math.floor((time % 60000) / 1000);
+                    const milliseconds = Math.floor((time % 1000) / 10);
+                    const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(2, '0')}`;
+                    finalMessage += `<li>${index + 1}. ${formattedTime}</li>`;
+                });
+            }
+            finalMessage += '</ul>';
+
+
+            finalMessage += '<button id="reset-button">Chơi Lại</button>';
+            gameMessage.innerHTML = finalMessage;
+            gameMessage.style.display = 'block';
+
+            // Gỡ bỏ và thêm lại event listener để tránh việc gắn nhiều lần
+            const existingResetButton = document.querySelector('#game-message #reset-button');
+            if (existingResetButton) {
+                existingResetButton.removeEventListener('click', initializeGame);
+            }
+            document.querySelector('#game-message #reset-button').addEventListener('click', initializeGame);
+
+            cancelAnimationFrame(window.animationFrameId);
+        }
+
+        function gameLoop(currentTime) {
+            if (isGameOver) return;
+
+            // Tính toán delta thời gian để chuyển động độc lập với FPS
+            if (!lastFrameTime) lastFrameTime = currentTime; // Khởi tạo lastFrameTime lần đầu
+            const delta = (currentTime - lastFrameTime) / 1000; // delta in seconds
+            lastFrameTime = currentTime;
+
+            // Cập nhật chuyển động của các vật cản di chuyển
+            movingObstacles.forEach(obs => {
+                const currentLeft = parseInt(obs.element.style.left);
+                const maxLeft = obs.initialLeft + obs.range;
+                const minLeft = obs.initialLeft;
+
+                // Điều chỉnh tốc độ dựa trên delta thời gian
+                obs.element.style.left = currentLeft + (obs.speed * obs.direction * delta * 60) + 'px'; // Nhân với 60 để chuẩn hóa tốc độ
+
+                if (obs.direction === 1 && parseInt(obs.element.style.left) >= maxLeft) {
+                    obs.direction = -1;
+                    obs.element.style.left = maxLeft + 'px'; // Clamp position
+                } else if (obs.direction === -1 && parseInt(obs.element.style.left) <= minLeft) {
+                    obs.direction = 1;
+                    obs.element.style.left = minLeft + 'px'; // Clamp position
+                }
+            });
+
+
+            // --- XỬ LÝ CHUYỂN ĐỘNG VÀ VA CHẠM THEO TỪNG TRỤC ---
+
+            // 1. Cập nhật và xử lý chuyển động X
+            if (isMovingLeft) {
+                xVelocity = Math.max(-maxSpeed, xVelocity - moveAcceleration * delta * targetFPS);
+            } else if (isMovingRight) {
+                xVelocity = Math.min(maxSpeed, xVelocity + moveAcceleration * delta * targetFPS);
+            } else {
+                // Áp dụng ma sát
+                if (xVelocity > 0) {
+                    xVelocity = Math.max(0, xVelocity - friction * delta * targetFPS);
+                } else if (xVelocity < 0) {
+                    xVelocity = Math.min(0, xVelocity + friction * delta * targetFPS);
+                }
             }
             
-            systemBalance += systemProfit; // Cộng/trừ tiền lãi/lỗ của hệ thống
-            updateWalletDisplay(); 
-            currentBetAmount = 0; 
-            betAmountInput.value = 100; 
-        }
+            playerX += xVelocity;
+            // Giới hạn playerX trong bounds của game world
+            playerX = Math.max(0, Math.min(level1Data.worldWidth - playerActualWidth, playerX));
+            checkCollisionsX(); // Kiểm tra va chạm X sau khi di chuyển X
 
-        // Hàm thêm lịch sử đặt cược
-        function addHistoryEntry(betType, betAmount, diceResult, status, balanceChange) {
-            const listItem = document.createElement('li');
-            let changeText = '';
-            let changeClass = '';
+            // 2. Cập nhật và xử lý chuyển động Y (trọng lực và nhảy)
+            const previousPlayerY = playerY;
+            playerY += yVelocity; // Cập nhật vị trí Y trước, sau đó xử lý va chạm
+            checkCollisionsY(previousPlayerY); // Truyền vị trí Y trước đó vào hàm va chạm Y (để kiểm tra xem có vượt qua đỉnh platform không)
 
-            if (status === 'Thắng') {
-                changeText = `+${balanceChange.toLocaleString()} xu`;
-                changeClass = 'win';
-            } else {
-                changeText = `${balanceChange.toLocaleString()} xu`; // đã là số âm
-                changeClass = 'lose';
+            // Cập nhật vị trí hiển thị của player
+            updatePlayerPosition();
+
+            // Cập nhật camera
+            const playerScreenX = playerX + cameraX;
+            const gameContainerWidth = gameContainer.offsetWidth;
+            const cameraThreshold = gameContainerWidth / 3; 
+
+            // Di chuyển camera sang phải nếu player đến gần biên phải của màn hình container
+            if (playerScreenX > gameContainerWidth - cameraThreshold) {
+                cameraX -= (playerScreenX - (gameContainerWidth - cameraThreshold));
+            } 
+            // Di chuyển camera sang trái nếu player đến gần biên trái của màn hình container
+            else if (playerScreenX < cameraThreshold) {
+                cameraX += (cameraThreshold - playerScreenX);
             }
 
-            listItem.innerHTML = `
-                <span class="bet-detail">Cược: ${betType} (${betAmount.toLocaleString()} xu)</span>
-                <span class="result-detail">KQ: ${diceResult}</span>
-                <span class="win-loss ${changeClass}">${status} (${changeText})</span>
-            `;
-            betHistoryList.prepend(listItem); 
-            if (betHistoryList.children.length > 10) { 
-                betHistoryList.removeChild(betHistoryList.lastChild);
-            }
+            // Giới hạn camera không ra ngoài biên thế giới
+            cameraX = Math.min(0, cameraX); // Không cho camera vượt quá 0 về bên trái
+            cameraX = Math.max(gameContainerWidth - level1Data.worldWidth, cameraX); // Không cho camera vượt quá biên phải của thế giới
+
+            gameWorld.style.transform = `translateX(${cameraX}px)`;
+
+            checkWin(); // Kiểm tra điều kiện thắng
+
+            // updateTimer() đã được gọi bằng setInterval, không cần gọi trong gameLoop
+            // updateTimer();
+
+            window.animationFrameId = requestAnimationFrame(gameLoop);
         }
 
-        betButtons.forEach(button => {
-            button.addEventListener('click', selectBet);
+        document.addEventListener('keydown', (event) => {
+            if (isGameOver) return;
+
+            switch (event.code) {
+                case 'KeyA':
+                    isMovingLeft = true;
+                    break;
+                case 'KeyD':
+                    isMovingRight = true;
+                    break;
+                case 'Space':
+                    jump();
+                    break;
+            }
         });
 
-        playAgainBtn.addEventListener('click', initializeGame);
+        document.addEventListener('keyup', (event) => {
+            if (isGameOver) return;
+
+            switch (event.code) {
+                case 'KeyA':
+                    isMovingLeft = false;
+                    break;
+                case 'KeyD':
+                    isMovingRight = false;
+                    break;
+            }
+        });
+
+        function initializeGame() {
+            createLevel(level1Data);
+            gameWorld.style.width = level1Data.worldWidth + 'px';
+
+            playerX = 50;
+            // Đặt Mario cao hơn một chút so với đỉnh platform đầu tiên để anh ấy rơi xuống
+            // và va chạm để kích hoạt isOnPlatform = true.
+            const initialPlatformTop = 50; 
+            playerY = initialPlatformTop - hitboxYOffset + 1; // Thêm 1 pixel
+
+            xVelocity = 0;
+            yVelocity = 0;
+            isJumping = false;
+            isMovingLeft = false;
+            isMovingRight = false;
+            isGameOver = false;
+            isOnPlatform = false; // Đặt là false ban đầu, Mario sẽ rơi xuống platform ngay lập tức
+
+            playerActualWidth = playerBaseWidth;
+            playerActualHeight = playerBaseHeight;
+            player.classList.remove('crouching', 'in-air', 'flipped');
+            facingRight = true;
+            cameraX = 0; // Đảm bảo camera reset về 0 khi chơi lại
+
+            gameMessage.style.display = 'none'; // Ẩn thông báo game over
+
+            startTime = performance.now();
+            elapsedTime = 0;
+            timeDisplay.textContent = 'Thời gian: 00:00.00';
+            clearInterval(timerInterval); // Xóa interval cũ nếu có
+            timerInterval = setInterval(updateTimer, 10); // Bắt đầu lại timer
+
+            updatePlayerPosition(); // Cập nhật vị trí player lần đầu
+
+            if (window.animationFrameId) {
+                cancelAnimationFrame(window.animationFrameId);
+            }
+            lastFrameTime = performance.now(); // Khởi tạo lastFrameTime cho gameLoop
+            window.animationFrameId = requestAnimationFrame(gameLoop); // Bắt đầu gameLoop
+        }
 
         initializeGame();
     </script>
