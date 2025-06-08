@@ -260,29 +260,27 @@
             grid-area: controls-left;
             display: none; 
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
+            justify-content: center; /* Căn giữa theo chiều dọc */
+            align-items: center;     /* Căn giữa theo chiều ngang */
             gap: 15px;
             background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
-            /* Đảm bảo khoảng cách an toàn từ mép màn hình */
-            padding-left: 20px; 
+            /* Thêm padding để đẩy các nút vào bên trong khỏi mép màn hình */
+            padding-left: 10px; 
         }
         #right-controls-area {
             grid-area: controls-right;
             display: none; 
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
+            justify-content: center; /* Căn giữa theo chiều dọc */
+            align-items: center;     /* Căn giữa theo chiều ngang */
             gap: 15px; 
             background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
-            /* Đảm bảo khoảng cách an toàn từ mép màn hình */
-            padding-right: 20px; 
+            /* Thêm padding để đẩy các nút vào bên trong khỏi mép màn hình */
+            padding-right: 10px; 
         }
 
 
@@ -340,8 +338,8 @@
                 grid-template-areas: 
                     "controls-left game-area controls-right";
                 /* Tối ưu hóa grid columns để căn chỉnh nút */
-                /* Đặt kích thước cố định cho cột điều khiển để đảm bảo khoảng trống */
-                grid-template-columns: 100px 1fr 100px; /* Thử đặt fixed width cho controls areas */
+                /* Sử dụng minmax để các cột controls có chiều rộng tối thiểu và linh hoạt */
+                grid-template-columns: minmax(60px, 1fr) 4fr minmax(60px, 1fr); 
                 grid-template-rows: 1fr; 
             }
             #game-container {
@@ -353,17 +351,9 @@
             }
             #left-controls-area {
                 display: flex; 
-                /* Căn giữa các nút trong khu vực điều khiển */
-                justify-content: center;
-                align-items: center;
-                padding: 0; /* Đặt lại padding nếu đã có trên body */
             }
             #right-controls-area {
                 display: flex; 
-                /* Căn giữa các nút trong khu vực điều khiển */
-                justify-content: center;
-                align-items: center;
-                padding: 0; /* Đặt lại padding nếu đã có trên body */
             }
             .control-button {
                 width: 10vw; 
@@ -858,30 +848,30 @@
             cancelAnimationFrame(window.animationFrameId);
         }
 
+        // Camera dead zone parameters
+        const deadZoneWidth = 0.4; // 40% của gameBaseWidth
+        const deadZoneOffset = (1 - deadZoneWidth) / 2; // Khoảng cách từ mép đến vùng chết
+
         function gameLoop(currentTime) {
             if (isGameOver) return;
 
-            // Tính delta time để đảm bảo tốc độ ổn định trên mọi thiết bị
             if (!lastFrameTime) lastFrameTime = currentTime; 
-            const delta = (currentTime - lastFrameTime) / 1000; // delta in seconds
+            const delta = (currentTime - lastFrameTime) / 1000; 
             lastFrameTime = currentTime;
 
-            // Cập nhật vị trí movingObstacles
             movingObstacles.forEach(obs => {
                 const currentLeft = parseInt(obs.element.style.left);
                 const maxLeft = obs.initialLeft + obs.range;
                 const minLeft = obs.initialLeft;
 
-                // Sử dụng delta để tốc độ mượt mà hơn
-                // Nhân với targetFPS để chuẩn hóa tốc độ độc lập với FPS thực tế
                 obs.element.style.left = currentLeft + (obs.speed * obs.direction * delta * targetFPS) + 'px';
 
                 if (obs.direction === 1 && parseInt(obs.element.style.left) >= maxLeft) {
                     obs.direction = -1;
-                    obs.element.style.left = maxLeft + 'px'; // Đảm bảo vật thể không đi quá giới hạn
+                    obs.element.style.left = maxLeft + 'px'; 
                 } else if (obs.direction === -1 && parseInt(obs.element.style.left) <= minLeft) {
                     obs.direction = 1;
-                    obs.element.style.left = minLeft + 'px'; // Đảm bảo vật thể không đi quá giới hạn
+                    obs.element.style.left = minLeft + 'px'; 
                 }
             });
 
@@ -898,7 +888,6 @@
             }
             
             playerX += xVelocity;
-            // Giới hạn playerX trong thế giới game
             playerX = Math.max(0, Math.min(level1Data.worldWidth - playerActualWidth, playerX));
             checkCollisionsX(); 
 
@@ -908,23 +897,33 @@
 
             updatePlayerPosition();
 
-            // CẬP NHẬT LOGIC CAMERA ĐỂ THEO DÕI MƯỢT MÀ HƠN
-            // Camera sẽ cố gắng giữ người chơi ở giữa màn hình logic của game
-            let targetCameraX = -(playerX - (gameBaseWidth / 2)); 
+            // Camera logic with dead zone
+            // Vị trí player tương đối so với màn hình gameContainer (0 đến gameBaseWidth)
+            const playerScreenX = playerX + cameraX;
+
+            const deadZoneLeft = gameBaseWidth * deadZoneOffset;
+            const deadZoneRight = gameBaseWidth * (1 - deadZoneOffset);
+
+            if (playerScreenX < deadZoneLeft) {
+                // Di chuyển camera sang phải nếu player đi vào vùng chết bên trái
+                cameraX += (deadZoneLeft - playerScreenX);
+            } else if (playerScreenX > deadZoneRight - playerActualWidth) { // - playerActualWidth để tính mép phải của player
+                // Di chuyển camera sang trái nếu player đi vào vùng chết bên phải
+                cameraX += (deadZoneRight - playerActualWidth - playerScreenX);
+            }
             
             // Giới hạn cameraX để không cuộn ra ngoài thế giới game
             const minAllowedCameraX = -(level1Data.worldWidth - gameBaseWidth); 
             const maxAllowedCameraX = 0; 
 
-            // Áp dụng giới hạn
-            cameraX = Math.min(maxAllowedCameraX, targetCameraX); 
+            cameraX = Math.min(maxAllowedCameraX, cameraX); 
             cameraX = Math.max(minAllowedCameraX, cameraX); 
 
-            // Áp dụng transform cho gameWorld (đã bỏ transition trên CSS để mượt hơn)
             gameWorld.style.transform = `translateX(${cameraX}px)`;
 
-            // Console log để debug cameraX và playerX
-            // console.log(`PlayerX: ${playerX.toFixed(2)}, CameraX: ${cameraX.toFixed(2)}`);
+            // Debugging console logs (có thể tắt đi khi đã ổn định)
+            // console.log(`PlayerX: ${playerX.toFixed(2)}, PlayerScreenX: ${playerScreenX.toFixed(2)}, CameraX: ${cameraX.toFixed(2)}`);
+            // console.log(`DeadZoneLeft: ${deadZoneLeft.toFixed(2)}, DeadZoneRight: ${deadZoneRight.toFixed(2)}`);
 
 
             checkWin(); 
@@ -1006,7 +1005,7 @@
             playerActualHeight = playerBaseHeight;
             player.classList.remove('crouching', 'in-air', 'flipped');
             facingRight = true;
-            cameraX = 0; 
+            cameraX = 0; // Đảm bảo camera reset về 0 khi bắt đầu game mới
 
             gameMessage.style.display = 'none'; 
 
