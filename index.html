@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mario Đơn Giản (Sửa lỗi đứng trên platform và Responsive)</title>
+    <title>Mario Đơn Giản (Tối ưu Mobile Responsive và Giới hạn PC)</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -20,45 +20,35 @@
             min-height: 100vh;
             width: 100vw; /* Đảm bảo body chiếm toàn bộ chiều rộng viewport */
             box-sizing: border-box; /* Tính toán padding và border vào kích thước */
-            /* Vô hiệu hóa hành vi cuộn mặc định trên iOS */
             -webkit-overflow-scrolling: touch;
             touch-action: manipulation; /* Ngăn pinch-zoom và double-tap zoom */
+            font-family: 'Roboto', sans-serif;
+            color: white;
         }
 
         #game-container {
-            /* Kích thước ban đầu (tỷ lệ 2:1) */
-            width: 900px;
+            /* Kích thước gốc (tỷ lệ 2:1) - Đây là kích thước logic của game */
+            width: 900px; 
             height: 450px;
             border: 5px solid #333;
             background-color: #aaddff;
             position: relative;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            /* Transform để điều chỉnh tỷ lệ */
+            /* Transform để điều chỉnh tỷ lệ, sẽ được JS cập nhật */
             transform-origin: center center;
-            /* Các giá trị này sẽ được cập nhật bởi JS */
-            transform: scale(1); 
+            transform: scale(1); /* Giá trị khởi tạo, JS sẽ ghi đè */
             top: 0;
             left: 0;
-        }
-
-        /* Responsive CSS cho #game-container */
-        @media (max-width: 900px), (max-height: 450px) {
-            #game-container {
-                /* Điều này sẽ bị ghi đè bởi JS để tính toán tỷ lệ chính xác hơn */
-                width: 100vw; 
-                height: 50vw; /* Giữ tỷ lệ 2:1 */
-                max-width: 100vh; /* Ngăn tràn khi chiều cao màn hình nhỏ hơn chiều rộng */
-                max-height: 50vh;
-                border: none; /* Bỏ border để tối ưu không gian trên màn hình nhỏ */
-            }
+            /* Thêm transition để scale mượt mà hơn */
+            transition: transform 0.1s ease-out, left 0.1s ease-out, top 0.1s ease-out;
         }
 
         #game-world {
             position: absolute;
             top: 0;
             left: 0;
-            width: 2500px; 
+            width: 2500px; /* Chiều rộng thế giới game */
             height: 100%;
             transition: transform 0.1s linear;
             background-image: url('game.jpg');
@@ -142,10 +132,14 @@
             color: white;
             text-shadow: 2px 2px 3px black;
             z-index: 20;
-            /* Điều chỉnh kích thước font cho mobile */
-            font-size: 0.8em; /* Giảm kích thước trên mobile */
-            top: 5px;
-            left: 5px;
+            /* Điều chỉnh kích thước font cho mobile - sẽ được JS điều chỉnh theo scale */
+            font-size: 1.8vw; /* Kích thước chữ tỷ lệ theo viewport width */
+            top: 1vw;
+            left: 1vw;
+            pointer-events: none; /* Không ngăn click vào các yếu tố bên dưới */
+            /* Giới hạn kích thước font trên PC */
+            max-font-size: 20px; 
+            min-font-size: 14px;
         }
 
         #game-message {
@@ -166,34 +160,39 @@
             text-shadow: 2px 2px 5px black;
             box-shadow: 0 0 30px rgba(255, 204, 0, 0.6);
             /* Responsive cho message box */
-            width: 80%; /* Chiếm 80% chiều rộng */
-            padding: 15px 30px;
-            font-size: 1.5em; /* Giảm kích thước font */
+            width: 80%; 
+            max-width: 600px; /* Giới hạn kích thước tối đa */
+            padding: 2vw; /* Sử dụng vw cho padding */
+            font-size: 4vw; /* Sử dụng vw cho font size */
             box-sizing: border-box;
+            /* Giới hạn font size trên PC */
+            max-font-size: 2.2em; 
         }
         #game-message p {
-            margin-bottom: 15px;
+            margin-bottom: 1.5vw;
             font-size: 0.8em;
             font-weight: bold;
+            max-font-size: 1.2em;
         }
         #game-message ul {
             list-style: none;
             padding: 0;
-            margin-top: 10px;
+            margin-top: 1vw;
             font-size: 0.6em;
-            max-height: 100px;
+            max-height: 10vh; /* Giới hạn chiều cao */
             overflow-y: auto;
             border-top: 1px dashed rgba(255,255,255,0.3);
-            padding-top: 10px;
+            padding-top: 1vw;
+            max-font-size: 0.8em;
         }
         #game-message li {
-            margin-bottom: 3px;
+            margin-bottom: 0.3vw;
         }
 
         #reset-button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 1em;
+            margin-top: 2vw;
+            padding: 1vw 2vw; /* Sử dụng vw cho padding */
+            font-size: 3vw; /* Sử dụng vw cho font size */
             cursor: pointer;
             background-color: #4CAF50;
             color: white;
@@ -201,6 +200,7 @@
             border-radius: 8px;
             transition: background-color 0.2s, transform 0.2s;
             font-family: 'Roboto', sans-serif;
+            max-font-size: 1.5em; /* Giới hạn font size trên PC */
         }
         #reset-button:hover {
             background-color: #45a049;
@@ -210,29 +210,44 @@
         /* Nút điều khiển cảm ứng (Mobile only) */
         #mobile-controls {
             position: fixed;
-            bottom: 10px;
-            width: 90%;
-            max-width: 600px;
+            bottom: 10px; /* Khoảng cách từ dưới cùng */
+            width: 90%; /* Chiếm 90% chiều rộng màn hình */
+            max-width: 600px; /* Giới hạn kích thước tối đa */
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
             background-color: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            border-radius: 10px;
-            opacity: 0.8;
+            padding: 10px 20px; /* Khoảng đệm */
+            border-radius: 15px;
+            opacity: 0.9;
             left: 50%;
             transform: translateX(-50%);
             display: none; /* Mặc định ẩn, chỉ hiển thị trên mobile */
+            box-sizing: border-box;
+            gap: 15px; /* Khoảng cách giữa các nhóm nút */
+        }
+        .control-group {
+            display: flex;
+            gap: 10px; /* Khoảng cách giữa các nút trong nhóm */
         }
         .control-button {
-            width: 80px;
-            height: 80px;
+            /* Sửa vấn đề nút quá to: sử dụng vw để co giãn theo màn hình */
+            width: 13vw; /* Kích thước nút theo viewport width */
+            height: 13vw; /* Kích thước nút theo viewport width */
+            max-width: 70px; /* Giới hạn kích thước tối đa */
+            max-height: 70px; /* Giới hạn kích thước tối đa */
+            min-width: 40px; /* Giới hạn kích thước tối thiểu */
+            min-height: 40px; /* Giới hạn kích thước tối thiểu */
+            
             background-color: #007bff;
             color: white;
             border: none;
             border-radius: 50%;
-            font-size: 2em;
+            font-size: 5vw; /* Kích thước chữ trong nút theo viewport width */
+            max-font-size: 30px; /* Giới hạn font size tối đa */
+            min-font-size: 20px; /* Giới hạn font size tối thiểu */
+
             font-weight: bold;
             cursor: pointer;
             display: flex;
@@ -240,25 +255,18 @@
             align-items: center;
             box-shadow: 0 5px 10px rgba(0,0,0,0.3);
             transition: background-color 0.2s, transform 0.2s;
-            user-select: none; /* Ngăn chọn văn bản */
-            -webkit-tap-highlight-color: transparent; /* Ngăn highlight khi chạm trên mobile */
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
         .control-button:active {
             background-color: #0056b3;
-            transform: scale(0.95);
-        }
-        .control-group {
-            display: flex;
-            gap: 10px;
+            transform: scale(0.9); /* Làm nút nhỏ lại khi chạm */
         }
 
-        /* Chỉ hiển thị nút điều khiển trên màn hình nhỏ hơn 900px (giả định là mobile) */
-        @media (max-width: 899px) {
+        /* Chỉ hiển thị nút điều khiển trên màn hình nhỏ hơn 900px hoặc khi chiều cao nhỏ hơn 450px */
+        @media (max-width: 899px), (max-height: 499px) { /* Nếu chiều rộng < 900px HOẶC chiều cao < 500px, hiển thị */
             #mobile-controls {
                 display: flex; /* Hiển thị trên mobile */
-            }
-            #time-display {
-                font-size: 1em; /* Lớn hơn một chút cho dễ nhìn trên mobile */
             }
         }
     </style>
@@ -342,28 +350,51 @@
         // Kích thước game gốc (reference size)
         const gameBaseWidth = 900;
         const gameBaseHeight = 450;
+        const gameAspectRatio = gameBaseWidth / gameBaseHeight; // 2:1
 
         // Hàm điều chỉnh kích thước game container cho responsive
         function resizeGame() {
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
 
-            // Tính toán tỷ lệ dựa trên chiều rộng hoặc chiều cao, chọn giá trị nhỏ hơn để game vừa với màn hình
-            const scaleX = viewportWidth / gameBaseWidth;
-            const scaleY = viewportHeight / gameBaseHeight;
-            const scale = Math.min(scaleX, scaleY);
+            let scale = 1;
 
-            // Áp dụng scale cho game container
+            const viewportAspectRatio = viewportWidth / viewportHeight;
+
+            if (viewportAspectRatio > gameAspectRatio) {
+                // Viewport rộng hơn game (có khoảng trống ở hai bên)
+                // Cố định chiều cao theo viewport, điều chỉnh chiều rộng
+                scale = viewportHeight / gameBaseHeight;
+            } else {
+                // Viewport hẹp hơn game (có khoảng trống ở trên/dưới)
+                // Cố định chiều rộng theo viewport, điều chỉnh chiều cao
+                scale = viewportWidth / gameBaseWidth;
+            }
+
+            // --- ĐIỂM THAY ĐỔI QUAN TRỌNG: Giới hạn kích thước tối đa cho scale ---
+            // Đặt một ngưỡng tối đa cho game (ví dụ: không lớn hơn 1.2 lần kích thước gốc hoặc 1200px chiều rộng)
+            const maxScale = 1.2; // Giới hạn game không phóng to quá 1.2 lần kích thước gốc
+            const maxGameWidthPC = 1200; // Hoặc một giá trị chiều rộng tối đa cụ thể trên PC
+            const maxGameHeightPC = 600; // Hoặc một giá trị chiều cao tối đa cụ thể trên PC
+
+            if (gameBaseWidth * scale > maxGameWidthPC || gameBaseHeight * scale > maxGameHeightPC) {
+                // Nếu game bị phóng quá lớn, hãy giới hạn scale dựa trên kích thước tối đa
+                scale = Math.min(maxGameWidthPC / gameBaseWidth, maxGameHeightPC / gameBaseHeight);
+            }
+            // Cũng có thể dùng cách đơn giản hơn: scale = Math.min(scale, maxScale);
+            // Cách trên linh hoạt hơn nếu bạn muốn giới hạn bằng pixel cụ thể.
+
+
+            // Áp dụng scale cho game container (kích thước logic vẫn là 900x450)
             gameContainer.style.transform = `scale(${scale})`;
-            gameContainer.style.width = gameBaseWidth + 'px'; // Giữ kích thước gốc để logic game không thay đổi
-            gameContainer.style.height = gameBaseHeight + 'px';
-
+            
             // Căn giữa game container sau khi scale
             gameContainer.style.left = (viewportWidth - gameBaseWidth * scale) / 2 + 'px';
             gameContainer.style.top = (viewportHeight - gameBaseHeight * scale) / 2 + 'px';
 
             // Ẩn/hiện mobile controls dựa trên kích thước màn hình
-            if (viewportWidth < 900 || viewportHeight < 450) { // Giả sử màn hình nhỏ hơn 900px hoặc 450px là mobile
+            // Hiển thị nếu màn hình nhỏ (ví dụ: chiều rộng dưới 900px hoặc chiều cao dưới 450px)
+            if (viewportWidth < 900 || viewportHeight < 450) { 
                 document.getElementById('mobile-controls').style.display = 'flex';
             } else {
                 document.getElementById('mobile-controls').style.display = 'none';
@@ -714,19 +745,30 @@
 
             updatePlayerPosition();
 
-            const playerScreenX = playerX + cameraX;
-            const gameContainerWidth = gameContainer.offsetWidth;
-            const cameraThreshold = gameContainerWidth / 3; 
+            // Cập nhật logic camera để nó hoạt động với kích thước scaled
+            // Get the current computed scale of the game container
+            const currentComputedStyle = window.getComputedStyle(gameContainer);
+            const transformMatrix = new DOMMatrixReadOnly(currentComputedStyle.transform);
+            const currentScale = transformMatrix.a; // or transformMatrix.d for Y scale, should be same
 
-            if (playerScreenX > gameContainerWidth - cameraThreshold) {
-                cameraX -= (playerScreenX - (gameContainerWidth - cameraThreshold));
+            const playerScreenX = playerX * currentScale + cameraX; // Vị trí player trên màn hình ảo sau khi scale
+            const gameContainerActualWidth = gameBaseWidth * currentScale; // Chiều rộng thực tế của container sau khi scale
+
+            const cameraThreshold = gameContainerActualWidth / 3; 
+
+            if (playerScreenX > gameContainerActualWidth - cameraThreshold) {
+                cameraX -= (playerScreenX - (gameContainerActualWidth - cameraThreshold));
             } 
             else if (playerScreenX < cameraThreshold) {
                 cameraX += (cameraThreshold - playerScreenX);
             }
 
-            cameraX = Math.min(0, cameraX); 
-            cameraX = Math.max(gameContainerWidth - level1Data.worldWidth, cameraX); 
+            // Giới hạn cameraX để không cuộn ra ngoài giới hạn của game world
+            const maxCameraX = 0; // Không cuộn quá bên trái
+            const minCameraX = -(level1Data.worldWidth * currentScale - gameContainerActualWidth); // Không cuộn quá bên phải
+
+            cameraX = Math.min(maxCameraX, cameraX); 
+            cameraX = Math.max(minCameraX, cameraX); 
 
             gameWorld.style.transform = `translateX(${cameraX}px)`;
 
@@ -744,15 +786,15 @@
 
             switch (event.code) {
                 case 'KeyA':
-                case 'ArrowLeft': // Thêm hỗ trợ phím mũi tên
+                case 'ArrowLeft': 
                     isMovingLeft = true;
                     break;
                 case 'KeyD':
-                case 'ArrowRight': // Thêm hỗ trợ phím mũi tên
+                case 'ArrowRight': 
                     isMovingRight = true;
                     break;
                 case 'Space':
-                case 'ArrowUp': // Thêm hỗ trợ phím mũi tên
+                case 'ArrowUp': 
                     jump();
                     break;
             }
@@ -777,13 +819,9 @@
         leftButton.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingLeft = true; });
         leftButton.addEventListener('touchend', (e) => { e.preventDefault(); isMovingLeft = false; });
         rightButton.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingRight = true; });
-        rightButton.addEventListener('touchend', (e) => { e.preventDefault(); isMovingRight = false; });
+        rightButton.addEventListener('touchend', (e) => { e.preventDefault(); }); 
         jumpButton.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
-        jumpButton.addEventListener('touchend', (e) => { e.preventDefault(); }); // Touchend không cần làm gì nhiều cho jump
-
-        // Để xử lý việc giữ nút liên tục trên mobile, bạn có thể cân nhắc sử dụng pointer events
-        // hoặc các thư viện joystick ảo, nhưng touchstart/touchend cơ bản này sẽ hoạt động.
-
+        jumpButton.addEventListener('touchend', (e) => { e.preventDefault(); }); 
 
         function initializeGame() {
             createLevel(level1Data);
