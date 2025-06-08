@@ -38,15 +38,15 @@
 
         #game-container {
             grid-area: game-area; 
-            width: 900px; 
-            height: 450px;
+            width: 900px; /* Kích thước gốc */
+            height: 450px; /* Kích thước gốc */
             border: 5px solid #333;
             background-color: #aaddff;
             position: relative; 
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
             transform-origin: center center; 
-            transform: scale(1); 
+            transform: scale(1); /* Mặc định scale 1, sẽ được JS/CSS điều chỉnh */
             transition: transform 0.1s ease-out; 
             
             max-width: 100%; /* Đảm bảo không vượt quá kích thước cha */
@@ -219,7 +219,7 @@
             box-sizing: border-box;
             gap: 15px; 
             pointer-events: auto;
-            display: none; 
+            display: none; /* Mặc định ẩn, sẽ được JS hiển thị nếu là mobile portrait */
         }
         .control-group {
             display: flex;
@@ -256,35 +256,40 @@
             transform: scale(0.9); 
         }
 
-        /* Mobile Controls (Landscape) - TỐI ƯU VỊ TRÍ NÚT */
+        /* Mobile Controls (Landscape) */
         #left-controls-area {
             grid-area: controls-left;
-            display: none; 
-            flex-direction: column; /* Đặt lại thành column để căn chỉnh dễ hơn */
-            justify-content: center; /* Căn giữa theo chiều dọc */
-            align-items: center;     /* Căn giữa theo chiều ngang */
+            display: none; /* Mặc định ẩn, sẽ được JS hiển thị nếu là mobile landscape */
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;     
             gap: 15px;
             background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
-            padding-left: 20px; /* Tăng padding */
+            padding-left: 20px; 
+            /* border: 1px dashed yellow; /* Debugging border */
         }
         #right-controls-area {
             grid-area: controls-right;
-            display: none; 
-            flex-direction: column; /* Đặt lại thành column */
-            justify-content: center; /* Căn giữa theo chiều dọc */
-            align-items: center;     /* Căn giữa theo chiều ngang */
+            display: none; /* Mặc định ẩn, sẽ được JS hiển thị nếu là mobile landscape */
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;     
             gap: 15px; 
             background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
-            padding-right: 20px; /* Tăng padding */
+            padding-right: 20px; 
+            /* border: 1px dashed orange; /* Debugging border */
         }
-        /* Đảm bảo nút jump nằm đúng vị trí trong right-controls-area */
-        #jump-button-landscape {
-            /* Không cần thêm margin đặc biệt nếu parent là flex column và justify/align center */
-            /* Nếu vẫn lệch, có thể dùng margin-left/right: auto; để đẩy ra xa */
+        /* THÊM CÁC QUY TẮC ĐỂ ĐẢM BẢO VỊ TRÍ NÚT JUMP */
+        #right-controls-area #jump-button-landscape {
+            /* Nếu nó vẫn lệch, thử các giá trị dưới đây. */
+            /* margin-left: auto; */
+            /* margin-right: 0; */
+            /* Hoặc nếu muốn căn giữa hoàn toàn trong cột phải: */
+            /* align-self: center; */
         }
 
 
@@ -303,15 +308,9 @@
                 max-width: 95vw;
                 max-height: 70vh; 
             }
-            #mobile-controls {
-                width: 90%; 
-                max-width: 500px;
-                margin-top: 15px; 
-                display: flex; /* Đảm bảo hiển thị */
-            }
-            #left-controls-area, #right-controls-area {
-                display: none; /* Đảm bảo ẩn */
-            }
+            /* JS sẽ tự động điều khiển display của mobile-controls */
+            /* #mobile-controls { display: flex; } */
+            /* #left-controls-area, #right-controls-area { display: none; } */
             .control-button {
                 width: 15vw; 
                 height: 15vw;
@@ -345,23 +344,17 @@
                 grid-template-areas: 
                     "controls-left game-area controls-right";
                 /* Cố định kích thước cột controls, để game-area chiếm phần còn lại */
-                /* THAY ĐỔI: Tăng kích thước cột controls để đảm bảo không gian */
-                grid-template-columns: 130px 1fr 130px; 
+                grid-template-columns: 130px 1fr 130px; /* Vẫn giữ 130px để đảm bảo không gian */
                 grid-template-rows: 1fr; 
             }
             #game-container {
                 max-width: 80vw; 
                 max-height: 98vh; 
             }
-            #mobile-controls {
-                display: none !important; 
-            }
-            #left-controls-area {
-                display: flex; /* Đảm bảo hiển thị */
-            }
-            #right-controls-area {
-                display: flex; /* Đảm bảo hiển thị */
-            }
+            /* JS sẽ tự động điều khiển display của các nhóm nút */
+            /* #mobile-controls { display: none !important; } */
+            /* #left-controls-area { display: flex; } */
+            /* #right-controls-area { display: flex; } */
             .control-button {
                 width: 10vw; 
                 height: 10vw;
@@ -399,21 +392,24 @@
                 grid-template-areas: "game-area"; 
                 grid-template-rows: 1fr;
                 grid-template-columns: 1fr;
+                padding: 0; /* Loại bỏ padding cho PC */
+            }
+            #game-container {
+                /* Đảm bảo game container luôn ở kích thước gốc trên PC */
+                transform: scale(1) !important; 
+                width: 900px; 
+                height: 450px; 
             }
             #time-display {
                 font-size: 1.3em;
                 top: 15px;
                 left: 15px;
             }
-            #game-container {
-                /* Giới hạn kích thước tối đa cho PC */
-                max-width: 900px; /* Giữ nguyên kích thước gốc */
-                max-height: 450px; /* Giữ nguyên kích thước gốc */
-            }
             #game-message {
                 padding: 40px; 
                 font-size: 2.2em; 
             }
+            /* Đảm bảo tất cả các nút điều khiển mobile bị ẩn trên PC */
             #mobile-controls, #left-controls-area, #right-controls-area {
                 display: none !important; 
             }
@@ -515,9 +511,9 @@
         const gameAspectRatio = gameBaseWidth / gameBaseHeight; 
 
         // --- CÁC GIỚI HẠN SCALE ---
-        const minGameScale = 0.6; // Có thể giảm minGameScale nếu game quá lớn trên một số điện thoại
-        const maxGameScale = 1.0; // THAY ĐỔI: Giảm maxGameScale để game không quá lớn trên PC/Telegram
-        
+        const minGameScale = 0.6; 
+        const maxGameScale = 1.6; // Đặt lại maxGameScale cao hơn, PC sẽ được xử lý riêng bằng CSS
+
         // Hàm điều chỉnh kích thước game container cho responsive
         function resizeGame() {
             const viewportWidth = window.innerWidth;
@@ -549,7 +545,15 @@
             scale = Math.min(scale, maxGameScale);
             scale = Math.max(scale, minGameScale);
 
-            gameContainer.style.transform = `scale(${scale})`;
+            // CHỈ ÁP DỤNG TRANSFORM SCALE BẰNG JS CHO CÁC MÀN HÌNH KHÔNG PHẢI PC
+            // PC sẽ được CSS đảm bảo scale(1)
+            if (viewportWidth < 1000) { // Nếu không phải màn hình PC
+                gameContainer.style.transform = `scale(${scale})`;
+            } else {
+                // Đảm bảo không có scale nào từ JS ảnh hưởng đến PC nếu CSS đã xử lý
+                gameContainer.style.transform = `scale(1)`; 
+            }
+            
             // Điều chỉnh origin để scale từ giữa
             gameContainer.style.transformOrigin = 'center center';
             
@@ -880,9 +884,9 @@
             cancelAnimationFrame(window.animationFrameId);
         }
 
-        // Camera parameters
-        const deadZoneWidth = 0; // THAY ĐỔI: Đặt về 0 để camera "dính" vào nhân vật
-        const deadZoneOffset = (1 - deadZoneWidth) / 2; 
+        // Camera dead zone parameters - GIẢM VÙNG CHẾT RẤT NHỎ ĐỂ CAMERA NHẠY HƠN VÀ GIỮ PLAYER GẦN TRUNG TÂM HƠN
+        const deadZoneWidth = 0.05; // 5% của gameBaseWidth
+        const deadZoneOffset = (1 - deadZoneWidth) / 2; // Sẽ là 0.475 (47.5%)
 
         function gameLoop(currentTime) {
             if (isGameOver) return;
@@ -932,15 +936,21 @@
 
             updatePlayerPosition();
 
-            // THAY ĐỔI LOGIC CAMERA ĐỂ NÓ "DÍNH" VÀO NHÂN VẬT
-            // Vị trí trung tâm của màn hình gameContainer ảo
-            const centerOfScreenX = gameBaseWidth / 2;
-            // Vị trí mà chúng ta muốn người chơi ở trên màn hình game (ví dụ: hơi lệch trái một chút để thấy rõ hơn)
-            const desiredPlayerScreenX = centerOfScreenX - playerActualWidth / 2; 
+            // Camera logic with dead zone (QUAY LẠI LOGIC NÀY)
+            const playerScreenX = playerX + cameraX; // Vị trí của người chơi trên màn hình game (trong khung gameContainer)
 
-            // Tính toán cameraX để đưa người chơi về vị trí mong muốn
-            cameraX = desiredPlayerScreenX - playerX;
+            const deadZoneLeft = gameBaseWidth * deadZoneOffset; // 900 * 0.475 = 427.5
+            const deadZoneRight = gameBaseWidth * (1 - deadZoneOffset); // 900 * 0.525 = 472.5
 
+            // Nếu người chơi di chuyển ra khỏi vùng chết bên trái
+            if (playerScreenX < deadZoneLeft) {
+                cameraX += (deadZoneLeft - playerScreenX);
+            } 
+            // Nếu người chơi di chuyển ra khỏi vùng chết bên phải
+            else if (playerScreenX + playerActualWidth > deadZoneRight) { 
+                cameraX += (deadZoneRight - (playerScreenX + playerActualWidth));
+            }
+            
             // Giới hạn cameraX để không cuộn ra ngoài thế giới game
             const minAllowedCameraX = -(level1Data.worldWidth - gameBaseWidth); 
             const maxAllowedCameraX = 0; 
@@ -951,7 +961,8 @@
             gameWorld.style.transform = `translateX(${cameraX}px)`;
 
             // Debugging console logs (có thể tắt đi khi đã ổn định)
-            // console.log(`PlayerX: ${playerX.toFixed(2)}, CameraX: ${cameraX.toFixed(2)}`);
+            // console.log(`PlayerX: ${playerX.toFixed(2)}, PlayerScreenX: ${playerScreenX.toFixed(2)}, CameraX: ${cameraX.toFixed(2)}`);
+            // console.log(`DeadZoneLeft: ${deadZoneLeft.toFixed(2)}, DeadZoneRight: ${deadZoneRight.toFixed(2)}`);
 
 
             checkWin(); 
