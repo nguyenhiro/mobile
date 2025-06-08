@@ -55,7 +55,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 2500px; 
+            width: 2500px; /* Chiều rộng thế giới game */
             height: 100%;
             /* ĐÃ BỎ TRANSITION ĐỂ CAMERA VÀ VẬT THỂ DI CHUYỂN MƯỢT HƠN */
             /* transition: transform 0.1s linear; */ 
@@ -267,8 +267,8 @@
             background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
-            /* Dịch các nút di chuyển sang phải trong khu vực của nó */
-            padding-right: 20px; /* Thêm padding bên phải để đẩy nút sang trái hơn */
+            /* Đảm bảo khoảng cách an toàn từ mép màn hình */
+            padding-left: 20px; 
         }
         #right-controls-area {
             grid-area: controls-right;
@@ -281,8 +281,8 @@
             background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
-            /* Dịch nút nhảy sang trái trong khu vực của nó */
-            padding-left: 20px; /* Thêm padding bên trái để đẩy nút sang phải hơn */
+            /* Đảm bảo khoảng cách an toàn từ mép màn hình */
+            padding-right: 20px; 
         }
 
 
@@ -316,21 +316,21 @@
             }
             /* ĐIỀU CHỈNH KÍCH THƯỚC THÔNG BÁO KẾT THÚC GAME CHO PORTRAIT */
             #game-message {
-                padding: 8px; /* Giảm padding thêm nữa */
-                font-size: 0.9em; /* Giảm font size thêm nữa */
+                padding: 8px; 
+                font-size: 0.9em; 
             }
             #game-message p {
-                font-size: 0.6em; /* Giảm font size cho P bên trong */
-                margin-bottom: 1vw; /* Giảm margin bottom */
+                font-size: 0.6em; 
+                margin-bottom: 1vw; 
             }
             #game-message ul {
-                font-size: 0.45em; /* Giảm font size cho UL bên trong */
-                max-height: 8vh; /* Giảm max height */
-                padding-top: 0.8vw; /* Giảm padding top */
+                font-size: 0.45em; 
+                max-height: 8vh; 
+                padding-top: 0.8vw; 
             }
             #reset-button {
-                font-size: 0.9em; /* Giảm font size nút reset */
-                padding: 0.8vw 1.5vw; /* Giảm padding nút reset */
+                font-size: 0.9em; 
+                padding: 0.8vw 1.5vw; 
             }
         }
 
@@ -340,7 +340,8 @@
                 grid-template-areas: 
                     "controls-left game-area controls-right";
                 /* Tối ưu hóa grid columns để căn chỉnh nút */
-                grid-template-columns: auto 1fr auto; 
+                /* Đặt kích thước cố định cho cột điều khiển để đảm bảo khoảng trống */
+                grid-template-columns: 100px 1fr 100px; /* Thử đặt fixed width cho controls areas */
                 grid-template-rows: 1fr; 
             }
             #game-container {
@@ -352,13 +353,17 @@
             }
             #left-controls-area {
                 display: flex; 
-                padding-left: 20px; /* Đảm bảo có khoảng cách an toàn từ mép trái */
-                padding-right: 0; /* Đặt lại padding phải nếu đã có */
+                /* Căn giữa các nút trong khu vực điều khiển */
+                justify-content: center;
+                align-items: center;
+                padding: 0; /* Đặt lại padding nếu đã có trên body */
             }
             #right-controls-area {
                 display: flex; 
-                padding-right: 20px; /* Đảm bảo có khoảng cách an toàn từ mép phải */
-                padding-left: 0; /* Đặt lại padding trái nếu đã có */
+                /* Căn giữa các nút trong khu vực điều khiển */
+                justify-content: center;
+                align-items: center;
+                padding: 0; /* Đặt lại padding nếu đã có trên body */
             }
             .control-button {
                 width: 10vw; 
@@ -373,20 +378,20 @@
             }
             /* ĐIỀU CHỈNH KÍCH THƯỚC THÔNG BÁO KẾT THÚC GAME CHO LANDSCAPE */
             #game-message {
-                padding: 12px; /* Giảm padding thêm nữa */
-                font-size: 1.2em; /* Giảm font size thêm nữa */
+                padding: 12px; 
+                font-size: 1.2em; 
             }
             #game-message p {
-                font-size: 0.7em; /* Giảm font size cho P bên trong */
+                font-size: 0.7em; 
                 margin-bottom: 0.8vw;
             }
             #game-message ul {
-                font-size: 0.55em; /* Giảm font size cho UL bên trong */
+                font-size: 0.55em; 
                 max-height: 9vh;
                 padding-top: 0.7vw;
             }
             #reset-button {
-                font-size: 1.0em; /* Giảm font size nút reset */
+                font-size: 1.0em; 
                 padding: 0.9vw 1.8vw;
             }
         }
@@ -893,6 +898,7 @@
             }
             
             playerX += xVelocity;
+            // Giới hạn playerX trong thế giới game
             playerX = Math.max(0, Math.min(level1Data.worldWidth - playerActualWidth, playerX));
             checkCollisionsX(); 
 
@@ -903,7 +909,6 @@
             updatePlayerPosition();
 
             // CẬP NHẬT LOGIC CAMERA ĐỂ THEO DÕI MƯỢT MÀ HƠN
-            // Tính toán vị trí player trong hệ tọa độ game world (không scaled)
             // Camera sẽ cố gắng giữ người chơi ở giữa màn hình logic của game
             let targetCameraX = -(playerX - (gameBaseWidth / 2)); 
             
@@ -917,6 +922,9 @@
 
             // Áp dụng transform cho gameWorld (đã bỏ transition trên CSS để mượt hơn)
             gameWorld.style.transform = `translateX(${cameraX}px)`;
+
+            // Console log để debug cameraX và playerX
+            // console.log(`PlayerX: ${playerX.toFixed(2)}, CameraX: ${cameraX.toFixed(2)}`);
 
 
             checkWin(); 
