@@ -23,30 +23,32 @@
             grid-template-columns: 1fr;
             
             justify-items: center; 
-            align-items: center;    
+            align-items: center;   
             
             min-height: 100vh;
-            width: 100vw;   
+            width: 100vw; 
             box-sizing: border-box; 
             -webkit-overflow-scrolling: touch;
-            touch-action: manipulation;  
+            touch-action: manipulation; 
             font-family: 'Roboto', sans-serif;
             color: white;
         }
 
         #game-container {
-            grid-area: game-area;   
-            width: 900px;   /* Kích thước mặc định cho PC */
-            height: 450px;  /* Kích thước mặc định cho PC */
+            grid-area: game-area; 
+            width: 900px; 
+            height: 450px;
             border: 5px solid #333;
             background-color: #aaddff;
             position: relative; 
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
             transform-origin: center center; 
-            transform: scale(1);    
-            transition: transform 0.1s ease-out;    
-            /* Các thuộc tính max-width và max-height được chuyển xuống media queries mobile */
+            transform: scale(1); 
+            transition: transform 0.1s ease-out; 
+            
+            max-width: 99vw; 
+            max-height: 99vh; 
         }
 
         #game-world {
@@ -73,7 +75,7 @@
             position: absolute;
             image-rendering: pixelated;
             z-index: 10;
-            transition: transform 0.1s ease-out;    
+            transition: transform 0.1s ease-out; 
         }
 
         #player.flipped {
@@ -185,7 +187,7 @@
         #reset-button {
             margin-top: 2vw;
             padding: 1vw 2vw; 
-            font-size: 1.2em;   
+            font-size: 1.2em; 
             cursor: pointer;
             background-color: #4CAF50;
             color: white;
@@ -202,41 +204,41 @@
 
         /* Mobile Controls (Portrait/Default) */
         #mobile-controls {
-            grid-area: controls-area;   
-            width: 100%;    
-            max-width: 900px;   
-            padding: 10px;  
+            grid-area: controls-area; 
+            width: 100%; 
+            max-width: 900px; 
+            padding: 10px; 
             display: flex;
-            justify-content: space-around;  
+            justify-content: space-around; 
             align-items: center;
             z-index: 1000;
-            background-color: transparent;  
+            background-color: transparent; 
             border-radius: 15px;
-            opacity: 0.9;   
+            opacity: 0.9; 
             box-sizing: border-box;
-            gap: 15px;  
+            gap: 15px; 
             pointer-events: auto;
-            display: none;  
+            display: none; 
         }
         .control-group {
             display: flex;
-            gap: 25px;  
+            gap: 25px; 
         }
         .control-button {
-            width: 15vw;    
-            height: 15vw;   
-            max-width: 80px;    
-            max-height: 80px;   
-            min-width: 60px;    
-            min-height: 60px;   
+            width: 15vw; 
+            height: 15vw; 
+            max-width: 80px; 
+            max-height: 80px; 
+            min-width: 60px; 
+            min-height: 60px; 
             
-            background-color: rgba(0, 123, 255, 0.7);   
+            background-color: rgba(0, 123, 255, 0.7); 
             color: white;
             border: none;
             border-radius: 50%;
             font-size: 6vw; 
-            max-font-size: 35px;    
-            min-font-size: 28px;    
+            max-font-size: 35px; 
+            min-font-size: 28px; 
 
             font-weight: bold;
             cursor: pointer;
@@ -249,19 +251,19 @@
             -webkit-tap-highlight-color: transparent;
         }
         .control-button:active {
-            background-color: rgba(0, 86, 179, 0.7);    
-            transform: scale(0.9);  
+            background-color: rgba(0, 86, 179, 0.7); 
+            transform: scale(0.9); 
         }
 
         /* Mobile Controls (Landscape) - TỐI ƯU VỊ TRÍ NÚT */
         #left-controls-area {
             grid-area: controls-left;
-            display: none;  
+            display: none; 
             flex-direction: column;
             justify-content: center; /* Căn giữa theo chiều dọc */
-            align-items: center;        /* Căn giữa theo chiều ngang */
+            align-items: center;     /* Căn giữa theo chiều ngang */
             gap: 15px;
-            background-color: transparent;  
+            background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
             /* Thêm padding để đẩy các nút vào bên trong khỏi mép màn hình */
@@ -269,16 +271,16 @@
         }
         #right-controls-area {
             grid-area: controls-right;
-            display: none;  
+            display: none; 
             flex-direction: column;
             justify-content: center; /* Căn giữa theo chiều dọc */
-            align-items: center;        /* Căn giữa theo chiều ngang */
-            gap: 15px;  
-            background-color: transparent;  
+            align-items: center;     /* Căn giữa theo chiều ngang */
+            gap: 15px; 
+            background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
             /* Thêm padding để đẩy các nút vào bên trong khỏi mép màn hình */
-            padding-right: 10px;    
+            padding-right: 10px; 
         }
 
 
@@ -287,78 +289,74 @@
         /* Mobile dọc (portrait) */
         @media (orientation: portrait) {
             body {
-                grid-template-areas:    
+                grid-template-areas: 
                     "game-area"
                     "controls-area";
                 grid-template-rows: 1fr auto;
                 grid-template-columns: 1fr;
             }
             #game-container {
-                max-width: 90vw; /* Áp dụng riêng cho mobile */
-                max-height: 65vh; /* Áp dụng riêng cho mobile */
-                width: auto; /* Cho phép tự điều chỉnh chiều rộng */
-                height: auto; /* Cho phép tự điều chỉnh chiều cao */
+                max-width: 95vw;
+                max-height: 70vh; 
             }
             #mobile-controls {
                 width: 90%; 
                 max-width: 500px;
-                margin-top: 15px;   
+                margin-top: 15px; 
             }
             .control-button {
-                width: 15vw;    
+                width: 15vw; 
                 height: 15vw;
-                min-width: 55px;    
-                min-height: 55px;   
+                min-width: 55px; 
+                min-height: 55px; 
                 font-size: 5vw; 
-                min-font-size: 26px;    
+                min-font-size: 26px; 
             }
             /* ĐIỀU CHỈNH KÍCH THƯỚC THÔNG BÁO KẾT THÚC GAME CHO PORTRAIT */
             #game-message {
-                padding: 8px;   
-                font-size: 0.9em;   
+                padding: 8px; 
+                font-size: 0.9em; 
             }
             #game-message p {
-                font-size: 0.6em;   
+                font-size: 0.6em; 
                 margin-bottom: 1vw; 
             }
             #game-message ul {
-                font-size: 0.45em;  
-                max-height: 8vh;    
+                font-size: 0.45em; 
+                max-height: 8vh; 
                 padding-top: 0.8vw; 
             }
             #reset-button {
-                font-size: 0.9em;   
-                padding: 0.8vw 1.5vw;   
+                font-size: 0.9em; 
+                padding: 0.8vw 1.5vw; 
             }
         }
 
         /* Mobile ngang (landscape) và Tablet */
         @media (orientation: landscape) and (max-width: 999px) {
             body {
-                grid-template-areas:    
+                grid-template-areas: 
                     "controls-left game-area controls-right";
                 /* Tối ưu hóa grid columns để căn chỉnh nút */
                 /* Sử dụng minmax để các cột controls có chiều rộng tối thiểu và linh hoạt */
-                grid-template-columns: minmax(60px, 1fr) 4fr minmax(60px, 1fr);  
-                grid-template-rows: 1fr;    
+                grid-template-columns: minmax(60px, 1fr) 4fr minmax(60px, 1fr); 
+                grid-template-rows: 1fr; 
             }
             #game-container {
-                max-width: 75vw; /* Áp dụng riêng cho mobile */
-                max-height: 90vh; /* Áp dụng riêng cho mobile */
-                width: auto;
-                height: auto;
+                max-width: 80vw; 
+                max-height: 98vh; 
             }
             #mobile-controls {
-                display: none !important;   
+                display: none !important; 
             }
             #left-controls-area {
-                display: flex;  
+                display: flex; 
             }
             #right-controls-area {
-                display: flex;  
+                display: flex; 
             }
             .control-button {
-                width: 10vw;    
+                width: 10vw; 
                 height: 10vw;
                 max-width: 70px;
                 max-height: 70px;
@@ -370,38 +368,31 @@
             }
             /* ĐIỀU CHỈNH KÍCH THƯỚC THÔNG BÁO KẾT THÚC GAME CHO LANDSCAPE */
             #game-message {
-                padding: 12px;  
-                font-size: 1.2em;   
+                padding: 12px; 
+                font-size: 1.2em; 
             }
             #game-message p {
-                font-size: 0.7em;   
+                font-size: 0.7em; 
                 margin-bottom: 0.8vw;
             }
             #game-message ul {
-                font-size: 0.55em;  
+                font-size: 0.55em; 
                 max-height: 9vh;
                 padding-top: 0.7vw;
             }
             #reset-button {
-                font-size: 1.0em;   
+                font-size: 1.0em; 
                 padding: 0.9vw 1.8vw;
             }
         }
 
 
-        /* Cho màn hình lớn (PC) - KHÔNG ĐỤNG ĐẾN, KÍCH THƯỚC CỐ ĐỊNH */
+        /* Cho màn hình lớn (PC) */
         @media (min-width: 1000px) {
             body {
-                grid-template-areas: "game-area";   
+                grid-template-areas: "game-area"; 
                 grid-template-rows: 1fr;
                 grid-template-columns: 1fr;
-            }
-            #game-container {
-                width: 900px;  /* Đảm bảo kích thước cố định cho PC */
-                height: 450px; /* Đảm bảo kích thước cố định cho PC */
-                transform: scale(1); /* Đảm bảo không bị scale bởi CSS */
-                max-width: none; /* Hủy bỏ giới hạn kích thước tối đa */
-                max-height: none; /* Hủy bỏ giới hạn kích thước tối đa */
             }
             #time-display {
                 font-size: 1.3em;
@@ -409,11 +400,11 @@
                 left: 15px;
             }
             #game-message {
-                padding: 40px;  
-                font-size: 2.2em;   
+                padding: 40px; 
+                font-size: 2.2em; 
             }
             #mobile-controls, #left-controls-area, #right-controls-area {
-                display: none !important;   
+                display: none !important; 
             }
         }
     </style>
@@ -479,16 +470,16 @@
         let playerActualWidth = playerBaseWidth;
         let playerActualHeight = playerBaseHeight;
 
-        const hitboxXOffset = 10;   
-        const hitboxYOffset = 0;    // ĐÃ CHỈNH SỬA: Đặt lại về 0 để đồng nhất playerY với đáy hitbox
+        const hitboxXOffset = 10; 
+        const hitboxYOffset = 5; 
 
-        const deathFallThreshold = -100;    
+        const deathFallThreshold = -100; 
 
         let isJumping = false;
         let isMovingLeft = false;
         let isMovingRight = false;
         let isGameOver = false;
-        let isOnPlatform = false;   
+        let isOnPlatform = false; 
 
         const moveAcceleration = 1.2;
         const friction = 0.8;
@@ -513,38 +504,27 @@
         const gameAspectRatio = gameBaseWidth / gameBaseHeight; 
 
         // --- CÁC GIỚI HẠN SCALE ---
-        const minGameScale = 0.8;   
-        const maxGameScale = 1.6;   
+        const minGameScale = 0.8; 
+        const maxGameScale = 1.6; 
 
         // Hàm điều chỉnh kích thước game container cho responsive
         function resizeGame() {
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
 
-            // Chỉ áp dụng logic scale cho thiết bị di động/máy tính bảng
-            if (viewportWidth < 1000) { 
-                let scale;
-                const viewportAspectRatio = viewportWidth / viewportHeight;
+            let scale = 1;
+            const viewportAspectRatio = viewportWidth / viewportHeight;
 
-                if (viewportAspectRatio > gameAspectRatio) {
-                    scale = viewportHeight / gameBaseHeight;
-                } else {
-                    scale = viewportWidth / gameBaseWidth;
-                }
-
-                scale = Math.min(scale, maxGameScale);
-                scale = Math.max(scale, minGameScale);
-
-                gameContainer.style.transform = `scale(${scale})`;
-                // playerActualWidth/Height được tính toán ngược lại với scale để hitbox giữ nguyên tỉ lệ với thế giới game
-                playerActualWidth = playerBaseWidth / scale;
-                playerActualHeight = playerBaseHeight / scale;
-            } else { // PC (viewportWidth >= 1000)
-                // Đảm bảo PC không bị scale bởi JS. CSS sẽ xử lý kích thước cố định.
-                gameContainer.style.transform = `scale(1)`;
-                playerActualWidth = playerBaseWidth; // Đặt lại kích thước player về base cho PC
-                playerActualHeight = playerBaseHeight; // Đặt lại kích thước player về base cho PC
+            if (viewportAspectRatio > gameAspectRatio) {
+                scale = viewportHeight / gameBaseHeight;
+            } else {
+                scale = viewportWidth / gameBaseWidth;
             }
+
+            scale = Math.min(scale, maxGameScale);
+            scale = Math.max(scale, minGameScale);
+
+            gameContainer.style.transform = `scale(${scale})`;
             
             const mobileControlsPortrait = document.getElementById('mobile-controls');
             const mobileControlsLeftLandscape = document.getElementById('left-controls-area');
@@ -558,7 +538,7 @@
                 mobileControlsPortrait.style.display = 'none';
                 mobileControlsLeftLandscape.style.display = 'flex';
                 mobileControlsRightLandscape.style.display = 'flex';
-            } else { // PC (min-width: 1000px)
+            } else { // PC
                 mobileControlsPortrait.style.display = 'none';
                 mobileControlsLeftLandscape.style.display = 'none';
                 mobileControlsRightLandscape.style.display = 'none';
@@ -594,7 +574,7 @@
                         initialLeft: data.left,
                         range: data.range,
                         speed: data.speed,
-                        direction: 1  
+                        direction: 1 
                     });
                 }
             });
@@ -659,15 +639,15 @@
             if (isOnPlatform) { 
                 isJumping = true;
                 yVelocity = jumpStrength;
-                isOnPlatform = false;   
+                isOnPlatform = false; 
             }
         }
 
         function getElementRect(element) {
             const left = parseInt(element.style.left);
             const bottom = parseInt(element.style.bottom);
-            const width = parseInt(element.style.width);   
-            const height = parseInt(element.style.height);  
+            const width = parseInt(element.style.width); 
+            const height = parseInt(element.style.height); 
             const right = left + width;
             const top = bottom + height;
             return { left, right, bottom, top, width, height };
@@ -679,7 +659,7 @@
             const playerHitbox = {
                 left: playerX + hitboxXOffset,
                 right: playerX + playerActualWidth - hitboxXOffset,
-                bottom: playerY + hitboxYOffset, // hitboxYOffset = 0, nên đây là playerY
+                bottom: playerY + hitboxYOffset,
                 top: playerY + playerActualHeight
             };
 
@@ -696,11 +676,11 @@
                     }
 
                     if (element.classList.contains('obstacle') || element.classList.contains('moving-obstacle')) {
-                        if (xVelocity > 0) {    
-                            playerX = elementRect.left - (playerActualWidth - hitboxXOffset);   
+                        if (xVelocity > 0) { 
+                            playerX = elementRect.left - (playerActualWidth - hitboxXOffset); 
                             xVelocity = 0;
                         } else if (xVelocity < 0) { 
-                            playerX = elementRect.right - hitboxXOffset;   
+                            playerX = elementRect.right - hitboxXOffset; 
                             xVelocity = 0;
                         }
                     }
@@ -712,17 +692,17 @@
             if (isGameOver) return; 
 
             let playerCurrentlyOnPlatform = false;
-            let highestPlatformY = -Infinity;   
+            let highestPlatformY = -Infinity; 
 
             const playerHitbox = {
                 left: playerX + hitboxXOffset,
                 right: playerX + playerActualWidth - hitboxXOffset,
-                bottom: playerY, // ĐÃ CHỈNH SỬA: hitboxYOffset = 0, nên bottom hitbox là playerY
+                bottom: playerY + hitboxYOffset,
                 top: playerY + playerActualHeight
             };
             
             // Va chạm từ dưới lên (đụng trần)
-            if (yVelocity > 0) {    
+            if (yVelocity > 0) { 
                 gameElements.forEach(element => {
                     if (element.classList.contains('platform') || element.classList.contains('obstacle') || element.classList.contains('moving-obstacle')) {
                         const elementRect = getElementRect(element);
@@ -731,11 +711,11 @@
                         
                         if (horizontalOverlap && 
                             (previousPlayerY + playerActualHeight) <= elementRect.bottom && 
-                            (playerY + playerActualHeight) > elementRect.bottom)    
+                            (playerY + playerActualHeight) > elementRect.bottom) 
                         {
-                            playerY = elementRect.bottom - playerActualHeight;  
-                            yVelocity = 0;  
-                            isJumping = true;   // Vẫn giữ lại, nhưng có thể cân nhắc lại nếu chỉ là đụng trần
+                            playerY = elementRect.bottom - playerActualHeight; 
+                            yVelocity = 0; 
+                            isJumping = true; 
                         }
                     }
                 });
@@ -748,11 +728,10 @@
 
                     const horizontalOverlap = (playerHitbox.right > elementRect.left && playerHitbox.left < elementRect.right);
 
-                    // ĐÃ CHỈNH SỬA: Điều kiện va chạm khi tiếp đất
                     if (horizontalOverlap && 
-                        yVelocity <= 0 &&    
-                        previousPlayerY >= elementRect.top &&  // Previous position was above platform top
-                        playerY <= elementRect.top)             // Current position is at or below platform top
+                        yVelocity <= 0 && 
+                        (previousPlayerY + hitboxYOffset) >= elementRect.top && 
+                        (playerY + hitboxYOffset) <= elementRect.top) 
                     {
                         if (element.classList.contains('hazard')) {
                             endGame('Bạn đã chạm chướng ngại vật nguy hiểm!');
@@ -768,17 +747,16 @@
             });
 
             if (playerCurrentlyOnPlatform) {
-                playerY = highestPlatformY; // ĐÃ CHỈNH SỬA: Đặt playerY bằng top của platform
+                playerY = highestPlatformY - hitboxYOffset;
                 yVelocity = 0;
                 isJumping = false;
             } else {
-                yVelocity -= gravity;   
+                yVelocity -= gravity; 
             }
             
-            isOnPlatform = playerCurrentlyOnPlatform;   
+            isOnPlatform = playerCurrentlyOnPlatform; 
 
-            // ĐÃ CHỈNH SỬA: Kiểm tra rơi xuống vực với hitboxYOffset = 0
-            if (playerY < deathFallThreshold && !isGameOver) {  
+            if (playerY + hitboxYOffset < deathFallThreshold && !isGameOver) { 
                 endGame('Bạn đã rơi xuống vực!');
                 return; 
             }
@@ -792,7 +770,7 @@
             const playerHitbox = {
                 left: playerX + hitboxXOffset,
                 right: playerX + playerActualWidth - hitboxXOffset,
-                bottom: playerY, // ĐÃ CHỈNH SỬA: hitboxYOffset = 0
+                bottom: playerY + hitboxYOffset,
                 top: playerY + playerActualHeight
             };
 
@@ -859,7 +837,7 @@
             const existingResetButton = document.querySelector('#game-message #reset-button');
             if (existingResetButton) {
                 existingResetButton.removeEventListener('click', initializeGame);
-                existingResetButton.removeEventListener('touchend', initializeGame);  
+                existingResetButton.removeEventListener('touchend', initializeGame); 
             }
             document.querySelector('#game-message #reset-button').addEventListener('click', initializeGame);
             document.querySelector('#game-message #reset-button').addEventListener('touchend', (e) => {
@@ -871,165 +849,186 @@
         }
 
         // Camera dead zone parameters
-        const deadZoneWidth = 0.5; // 50% của chiều rộng game container
-        const deadZoneOffset = (gameBaseWidth * (1 - deadZoneWidth)) / 2; // Khoảng cách từ mép đến vùng chết (tính bằng px)
+        const deadZoneWidth = 0.4; // 40% của gameBaseWidth
+        const deadZoneOffset = (1 - deadZoneWidth) / 2; // Khoảng cách từ mép đến vùng chết
 
         function gameLoop(currentTime) {
             if (isGameOver) return;
 
-            if (!lastFrameTime) {
-                lastFrameTime = currentTime;
-            }
-            const deltaTime = (currentTime - lastFrameTime) / (1000 / targetFPS); // Chuẩn hóa tốc độ
+            if (!lastFrameTime) lastFrameTime = currentTime; 
+            const delta = (currentTime - lastFrameTime) / 1000; 
             lastFrameTime = currentTime;
 
-            // Xử lý di chuyển ngang
-            if (isMovingLeft) {
-                xVelocity = Math.max(xVelocity - moveAcceleration * deltaTime, -maxSpeed);
-            } else if (isMovingRight) {
-                xVelocity = Math.min(xVelocity + moveAcceleration * deltaTime, maxSpeed);
-            } else {
-                xVelocity *= friction;
-                if (Math.abs(xVelocity) < 0.1) {
-                    xVelocity = 0;
-                }
-            }
-
-            const previousPlayerY = playerY; // Lưu vị trí Y trước khi cập nhật
-            playerX += xVelocity * deltaTime;
-            playerY += yVelocity * deltaTime;
-
-            // Giới hạn player trong thế giới game
-            playerX = Math.max(0, Math.min(playerX, level1Data.worldWidth - playerActualWidth));
-
-            checkCollisionsX();
-            checkCollisionsY(previousPlayerY); // Truyền vị trí Y cũ để xử lý va chạm chính xác hơn
-
-            // Cập nhật vị trí các chướng ngại vật di chuyển
             movingObstacles.forEach(obs => {
-                obs.element.style.left = obs.initialLeft + Math.sin(currentTime * obs.speed * 0.005) * obs.range + 'px';
+                const currentLeft = parseInt(obs.element.style.left);
+                const maxLeft = obs.initialLeft + obs.range;
+                const minLeft = obs.initialLeft;
+
+                obs.element.style.left = currentLeft + (obs.speed * obs.direction * delta * targetFPS) + 'px';
+
+                if (obs.direction === 1 && parseInt(obs.element.style.left) >= maxLeft) {
+                    obs.direction = -1;
+                    obs.element.style.left = maxLeft + 'px'; 
+                } else if (obs.direction === -1 && parseInt(obs.element.style.left) <= minLeft) {
+                    obs.direction = 1;
+                    obs.element.style.left = minLeft + 'px'; 
+                }
             });
 
+            if (isMovingLeft) {
+                xVelocity = Math.max(-maxSpeed, xVelocity - moveAcceleration * delta * targetFPS);
+            } else if (isMovingRight) {
+                xVelocity = Math.min(maxSpeed, xVelocity + moveAcceleration * delta * targetFPS);
+            } else {
+                if (xVelocity > 0) {
+                    xVelocity = Math.max(0, xVelocity - friction * delta * targetFPS);
+                } else if (xVelocity < 0) {
+                    xVelocity = Math.min(0, xVelocity + friction * delta * targetFPS);
+                }
+            }
+            
+            playerX += xVelocity;
+            playerX = Math.max(0, Math.min(level1Data.worldWidth - playerActualWidth, playerX));
+            checkCollisionsX(); 
+
+            const previousPlayerY = playerY;
+            playerY += yVelocity; 
+            checkCollisionsY(previousPlayerY); 
+
             updatePlayerPosition();
 
-            // Cập nhật camera (chỉ di chuyển khi player vượt ra khỏi dead zone)
-            const playerCenter = playerX + playerActualWidth / 2;
-            const containerCenter = gameBaseWidth / 2;
+            // Camera logic with dead zone
+            // Vị trí player tương đối so với màn hình gameContainer (0 đến gameBaseWidth)
+            const playerScreenX = playerX + cameraX;
 
-            const currentCameraCenter = -cameraX + containerCenter; // Vị trí trung tâm của camera trong thế giới game
+            const deadZoneLeft = gameBaseWidth * deadZoneOffset;
+            const deadZoneRight = gameBaseWidth * (1 - deadZoneOffset);
 
-            // Nếu người chơi vượt ra khỏi vùng chết bên phải
-            if (playerCenter > currentCameraCenter + deadZoneOffset) {
-                cameraX -= (playerCenter - (currentCameraCenter + deadZoneOffset));
+            if (playerScreenX < deadZoneLeft) {
+                // Di chuyển camera sang phải nếu player đi vào vùng chết bên trái
+                cameraX += (deadZoneLeft - playerScreenX);
+            } else if (playerScreenX > deadZoneRight - playerActualWidth) { // - playerActualWidth để tính mép phải của player
+                // Di chuyển camera sang trái nếu player đi vào vùng chết bên phải
+                cameraX += (deadZoneRight - playerActualWidth - playerScreenX);
             }
-            // Nếu người chơi vượt ra khỏi vùng chết bên trái
-            else if (playerCenter < currentCameraCenter - deadZoneOffset) {
-                cameraX -= (playerCenter - (currentCameraCenter - deadZoneOffset));
-            }
+            
+            // Giới hạn cameraX để không cuộn ra ngoài thế giới game
+            const minAllowedCameraX = -(level1Data.worldWidth - gameBaseWidth); 
+            const maxAllowedCameraX = 0; 
 
-            // Giới hạn camera trong thế giới game
-            cameraX = Math.max(-(level1Data.worldWidth - gameBaseWidth), Math.min(0, cameraX));
+            cameraX = Math.min(maxAllowedCameraX, cameraX); 
+            cameraX = Math.max(minAllowedCameraX, cameraX); 
+
             gameWorld.style.transform = `translateX(${cameraX}px)`;
 
-            checkWin();
-            updateTimer();
+            // Debugging console logs (có thể tắt đi khi đã ổn định)
+            // console.log(`PlayerX: ${playerX.toFixed(2)}, PlayerScreenX: ${playerScreenX.toFixed(2)}, CameraX: ${cameraX.toFixed(2)}`);
+            // console.log(`DeadZoneLeft: ${deadZoneLeft.toFixed(2)}, DeadZoneRight: ${deadZoneRight.toFixed(2)}`);
+
+
+            checkWin(); 
 
             window.animationFrameId = requestAnimationFrame(gameLoop);
         }
 
-        // Bắt đầu game
+        document.addEventListener('keydown', (event) => {
+            if (isGameOver) return;
+            if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.code)) {
+                event.preventDefault();
+            }
+
+            switch (event.code) {
+                case 'KeyA':
+                case 'ArrowLeft': 
+                    isMovingLeft = true;
+                    break;
+                case 'KeyD':
+                case 'ArrowRight': 
+                    isMovingRight = true;
+                    break;
+                case 'Space':
+                case 'ArrowUp': 
+                    jump();
+                    break;
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            if (isGameOver) return;
+
+            switch (event.code) {
+                case 'KeyA':
+                case 'ArrowLeft':
+                    isMovingLeft = false;
+                    break;
+                case 'KeyD':
+                case 'ArrowRight':
+                    isMovingRight = false;
+                    break;
+            }
+        });
+
+        // Event listeners cho mobile controls (Portrait)
+        leftButton.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingLeft = true; });
+        leftButton.addEventListener('touchend', (e) => { e.preventDefault(); isMovingLeft = false; });
+        rightButton.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingRight = true; });
+        rightButton.addEventListener('touchend', (e) => { e.preventDefault(); isMovingRight = false; }); 
+        jumpButton.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
+        jumpButton.addEventListener('touchend', (e) => { e.preventDefault(); }); 
+
+        // Event listeners cho mobile controls (Landscape)
+        leftButtonLandscape.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingLeft = true; });
+        leftButtonLandscape.addEventListener('touchend', (e) => { e.preventDefault(); isMovingLeft = false; });
+        rightButtonLandscape.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingRight = true; });
+        rightButtonLandscape.addEventListener('touchend', (e) => { e.preventDefault(); isMovingRight = false; }); 
+        jumpButtonLandscape.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
+        jumpButtonLandscape.addEventListener('touchend', (e) => { e.preventDefault(); }); 
+
+
         function initializeGame() {
-            isGameOver = false;
-            gameMessage.style.display = 'none';
-            playerX = 50; // ĐÃ CHỈNH SỬA: Đặt playerY an toàn trên platform đầu tiên
-            playerY = 50; // ĐÃ CHỈNH SỬA: Đặt playerY an toàn trên platform đầu tiên
+            createLevel(level1Data);
+            gameWorld.style.width = level1Data.worldWidth + 'px';
+
+            playerX = 50;
+            const initialPlatformTop = 50; 
+            playerY = initialPlatformTop - hitboxYOffset + 1; 
+
             xVelocity = 0;
             yVelocity = 0;
-            cameraX = 0;
-            facingRight = true;
-            isOnPlatform = false;
-            player.classList.remove('flipped'); // Đảm bảo player hướng đúng ban đầu
-            
-            // Đảm bảo kích thước player ban đầu được thiết lập trước khi bắt đầu loop
-            // Nó sẽ được cập nhật bởi resizeGame() ngay sau đó
+            isJumping = false;
+            isMovingLeft = false;
+            isMovingRight = false;
+            isGameOver = false;
+            isOnPlatform = false; 
+
             playerActualWidth = playerBaseWidth;
             playerActualHeight = playerBaseHeight;
+            player.classList.remove('crouching', 'in-air', 'flipped');
+            facingRight = true;
+            cameraX = 0; // Đảm bảo camera reset về 0 khi bắt đầu game mới
 
-            createLevel(level1Data);
-            updatePlayerPosition();
-            gameWorld.style.transform = `translateX(${cameraX}px)`; // Đặt camera về 0
+            gameMessage.style.display = 'none'; 
 
             startTime = performance.now();
-            clearInterval(timerInterval); // Đảm bảo timer cũ được xóa
-            timerInterval = setInterval(updateTimer, 10); // Cập nhật timer mỗi 10ms
-            
-            // Gọi resizeGame lần đầu để thiết lập đúng kích thước và hiển thị controls
-            resizeGame();
+            elapsedTime = 0;
+            timeDisplay.textContent = 'Thời gian: 00:00.00';
+            clearInterval(timerInterval); 
+            timerInterval = setInterval(updateTimer, 10); 
 
-            cancelAnimationFrame(window.animationFrameId); // Hủy bất kỳ animation frame cũ nào
-            window.animationFrameId = requestAnimationFrame(gameLoop);
-        }
+            updatePlayerPosition(); 
 
-        // --- Event Listeners ---
-
-        // Keyboard controls (for PC, will not be displayed on mobile)
-        document.addEventListener('keydown', (e) => {
-            if (isGameOver) return;
-            if (e.key === 'ArrowLeft' || e.key === 'A' || e.key === 'a') {
-                isMovingLeft = true;
-            } else if (e.key === 'ArrowRight' || e.key === 'D' || e.key === 'd') {
-                isMovingRight = true;
-            } else if (e.key === 'ArrowUp' || e.key === 'W' || e.key === 'w' || e.key === ' ') {
-                jump();
+            if (window.animationFrameId) {
+                cancelAnimationFrame(window.animationFrameId);
             }
+            lastFrameTime = performance.now(); 
+            window.animationFrameId = requestAnimationFrame(gameLoop); 
+        }
+
+        // Gọi resizeGame lần đầu khi trang tải xong
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeGame();
+            resizeGame(); 
         });
-
-        document.addEventListener('keyup', (e) => {
-            if (isGameOver) return;
-            if (e.key === 'ArrowLeft' || e.key === 'A' || e.key === 'a') {
-                isMovingLeft = false;
-            } else if (e.key === 'ArrowRight' || e.key === 'D' || e.key === 'd') {
-                isMovingRight = false;
-            }
-        });
-
-        // Mobile touch controls (portrait)
-        if (leftButton) {
-            leftButton.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingLeft = true; });
-            leftButton.addEventListener('touchend', (e) => { e.preventDefault(); isMovingLeft = false; });
-            leftButton.addEventListener('touchcancel', (e) => { e.preventDefault(); isMovingLeft = false; }); // Handle touch leave
-        }
-        if (rightButton) {
-            rightButton.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingRight = true; });
-            rightButton.addEventListener('touchend', (e) => { e.preventDefault(); isMovingRight = false; });
-            rightButton.addEventListener('touchcancel', (e) => { e.preventDefault(); isMovingRight = false; });
-        }
-        if (jumpButton) {
-            jumpButton.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
-            jumpButton.addEventListener('touchend', (e) => { e.preventDefault(); });
-            jumpButton.addEventListener('touchcancel', (e) => { e.preventDefault(); });
-        }
-
-        // Mobile touch controls (landscape)
-        if (leftButtonLandscape) {
-            leftButtonLandscape.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingLeft = true; });
-            leftButtonLandscape.addEventListener('touchend', (e) => { e.preventDefault(); isMovingLeft = false; });
-            leftButtonLandscape.addEventListener('touchcancel', (e) => { e.preventDefault(); isMovingLeft = false; });
-        }
-        if (rightButtonLandscape) {
-            rightButtonLandscape.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingRight = true; });
-            rightButtonLandscape.addEventListener('touchend', (e) => { e.preventDefault(); isMovingRight = false; });
-            rightButtonLandscape.addEventListener('touchcancel', (e) => { e.preventDefault(); isMovingRight = false; });
-        }
-        if (jumpButtonLandscape) {
-            jumpButtonLandscape.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
-            jumpButtonLandscape.addEventListener('touchend', (e) => { e.preventDefault(); });
-            jumpButtonLandscape.addEventListener('touchcancel', (e) => { e.preventDefault(); });
-        }
-
-        // Initialize the game when the page loads
-        document.addEventListener('DOMContentLoaded', initializeGame);
-
     </script>
 </body>
 </html>
