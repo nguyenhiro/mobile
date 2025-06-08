@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mario Đơn Giản (Căn giữa và Tối ưu tỷ lệ)</title>
+    <title>Mario Đơn Giản (Tối ưu Mobile Ngang & Căn giữa)</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -16,8 +16,9 @@
             background-position: center center;
             /* Sử dụng Flexbox để căn giữa game-container */
             display: flex;
-            justify-content: center; /* Căn giữa theo chiều ngang */
-            align-items: center;   /* Căn giữa theo chiều dọc */
+            flex-direction: column; /* Quan trọng: Xếp game và controls theo cột */
+            justify-content: center; /* Căn giữa theo chiều dọc (game-container + mobile-controls) */
+            align-items: center;   /* Căn giữa theo chiều ngang */
             min-height: 100vh;
             width: 100vw; 
             box-sizing: border-box; 
@@ -33,24 +34,17 @@
             height: 450px;
             border: 5px solid #333;
             background-color: #aaddff;
-            position: relative; /* Giữ relative cho các phần tử con */
+            position: relative; 
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            /* Transform để điều chỉnh tỷ lệ, sẽ được JS cập nhật */
-            transform-origin: center center; /* Rất quan trọng: Scale từ giữa */
-            transform: scale(1); /* Giá trị khởi tạo, JS sẽ ghi đè */
+            transform-origin: center center; 
+            transform: scale(1); 
+            transition: transform 0.1s ease-out; 
             
-            /* Loại bỏ top và left cố định ở đây, để flexbox xử lý hoặc JS tính toán */
-            /* top: 0; */
-            /* left: 0; */
-
-            /* Thêm transition để scale mượt mà hơn */
-            transition: transform 0.1s ease-out; /* Chỉ transform, vị trí được flexbox xử lý */
-            
-            /* Đảm bảo game-container không bị quá to trên màn hình lớn */
-            max-width: 95vw; /* Giới hạn game không vượt quá 95% chiều rộng viewport */
-            max-height: 95vh; /* Giới hạn game không vượt quá 95% chiều cao viewport */
-            /* Điều này sẽ tự động co giãn game nếu màn hình quá nhỏ */
+            /* Giới hạn kích thước trên PC, sử dụng tỷ lệ viewport lớn hơn để game to hơn */
+            max-width: 98vw; /* Tăng từ 95vw lên 98vw */
+            max-height: 98vh; /* Tăng từ 95vh lên 98vh */
+            /* Điều này giúp game không bị quá to trên màn hình lớn và tự động co giãn */
         }
 
         #game-world {
@@ -137,15 +131,11 @@
             left: 10px;
             font-family: 'Roboto', sans-serif;
             font-weight: bold;
-            font-size: 1.2em; /* Kích thước mặc định */
+            font-size: 1.2em; 
             color: white;
             text-shadow: 2px 2px 3px black;
             z-index: 20;
-            pointer-events: none; /* Không ngăn click vào các yếu tố bên dưới */
-
-            /* Sử dụng min/max cho font size, tốt hơn là dùng media queries */
-            /* min-font-size: 14px; */
-            /* max-font-size: 20px; */
+            pointer-events: none; 
         }
 
         #game-message {
@@ -168,6 +158,8 @@
             width: 80%; 
             max-width: 600px;
             box-sizing: border-box;
+            /* Thêm pointer-events để nút chơi lại hoạt động */
+            pointer-events: auto; 
         }
         #game-message p {
             margin-bottom: 1.5vw;
@@ -191,7 +183,7 @@
         #reset-button {
             margin-top: 2vw;
             padding: 1vw 2vw; 
-            font-size: 1.2em; /* Sử dụng em để tỷ lệ với font-size của message box */
+            font-size: 1.2em; 
             cursor: pointer;
             background-color: #4CAF50;
             color: white;
@@ -199,6 +191,8 @@
             border-radius: 8px;
             transition: background-color 0.2s, transform 0.2s;
             font-family: 'Roboto', sans-serif;
+            /* Đảm bảo nút này có thể được click */
+            pointer-events: auto; 
         }
         #reset-button:hover {
             background-color: #45a049;
@@ -207,10 +201,11 @@
 
         /* Nút điều khiển cảm ứng (Mobile only) */
         #mobile-controls {
-            position: fixed;
-            bottom: 10px; 
-            width: 90%; 
-            max-width: 600px; 
+            /* Bỏ position: fixed để nó nằm dưới game-container trong flexbox */
+            /* position: fixed; */ 
+            margin-top: 15px; /* Khoảng cách từ game-container */
+            width: 90%; /* Chiếm 90% chiều rộng của body (khi căn giữa) */
+            max-width: 600px; /* Giới hạn kích thước tối đa giống game-message */
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -219,24 +214,26 @@
             padding: 10px 20px; 
             border-radius: 15px;
             opacity: 0.9;
-            left: 50%;
-            transform: translateX(-50%);
-            display: none; 
+            /* Bỏ left, transformX vì body flexbox đã căn giữa */
+            /* left: 50%; */
+            /* transform: translateX(-50%); */
+            display: none; /* Mặc định ẩn, JS sẽ điều khiển */
             box-sizing: border-box;
             gap: 15px; 
+            pointer-events: auto; /* Đảm bảo nút này có thể được click */
         }
         .control-group {
             display: flex;
-            gap: 10px; 
+            /* Tăng khoảng cách giữa các nút trái/phải */
+            gap: 20px; /* Tăng từ 10px lên 20px */
         }
         .control-button {
-            /* Kích thước nút: linh hoạt nhưng có giới hạn min/max */
             width: 13vw; 
             height: 13vw; 
             max-width: 70px; 
             max-height: 70px; 
-            min-width: 45px; /* Tăng min-width/height một chút */
-            min-height: 45px; 
+            min-width: 50px; /* Tăng từ 45px lên 50px để nút to hơn */
+            min-height: 50px; 
             
             background-color: #007bff;
             color: white;
@@ -244,7 +241,7 @@
             border-radius: 50%;
             font-size: 5vw; 
             max-font-size: 30px; 
-            min-font-size: 22px; /* Tăng min-font-size một chút */
+            min-font-size: 24px; /* Tăng từ 22px lên 24px */
 
             font-weight: bold;
             cursor: pointer;
@@ -265,13 +262,13 @@
         /* Cho màn hình rất nhỏ (dưới 480px, thường là điện thoại dọc) */
         @media (max-width: 480px) {
             #time-display {
-                font-size: 1.1em; /* Kích thước font cố định cho mobile nhỏ, dùng em để tỷ lệ với root */
+                font-size: 1.1em; 
                 top: 5px;
                 left: 5px;
             }
             #game-message {
                 padding: 20px;
-                font-size: 1.5em; /* Tỷ lệ với root font-size */
+                font-size: 1.5em; 
             }
             #game-message p {
                 font-size: 1em;
@@ -284,9 +281,12 @@
                 padding: 10px 20px;
             }
             .control-button {
-                width: 50px; 
-                height: 50px;
-                font-size: 24px;
+                width: 55px; /* Tăng kích thước nút cho mobile nhỏ */
+                height: 55px;
+                font-size: 26px;
+            }
+            .control-group {
+                gap: 15px; /* Giảm khoảng cách cho mobile nhỏ */
             }
         }
 
@@ -310,6 +310,14 @@
             #reset-button {
                 font-size: 1.1em;
                 padding: 12px 25px;
+            }
+             .control-button {
+                width: 60px; /* Tăng kích thước nút cho tablet/mobile ngang */
+                height: 60px;
+                font-size: 28px;
+            }
+            .control-group {
+                gap: 20px; 
             }
         }
 
@@ -423,11 +431,9 @@
         const gameAspectRatio = gameBaseWidth / gameBaseHeight; // 2:1
 
         // --- CÁC GIỚI HẠN MỚI ---
-        const minGameScale = 0.6; // Scale tối thiểu cho game (ví dụ: không nhỏ hơn 60% kích thước gốc)
-        const maxGameScale = 1.2; // Scale tối đa cho game (ví dụ: không lớn hơn 120% kích thước gốc)
-        // Hoặc bạn có thể dùng giới hạn pixel cụ thể cho màn hình lớn, nhưng tôi đã bỏ trong CSS để tận dụng max-width/max-height của game-container
-        // const preferredMaxGameWidth = 1200; 
-        // const preferredMaxGameHeight = 600; 
+        const minGameScale = 0.7; // Scale tối thiểu cho game (tăng từ 0.6 để mobile ngang to hơn)
+        const maxGameScale = 1.4; // Scale tối đa cho game (tăng từ 1.2 để PC to hơn)
+        // Chúng ta sẽ dựa vào max-width/max-height của game-container trong CSS để kiểm soát kích thước lớn trên PC
 
         // Hàm điều chỉnh kích thước game container cho responsive
         function resizeGame() {
@@ -438,33 +444,27 @@
             const viewportAspectRatio = viewportWidth / viewportHeight;
 
             if (viewportAspectRatio > gameAspectRatio) {
-                // Viewport rộng hơn game
+                // Viewport rộng hơn game (có khoảng trống ở hai bên)
                 scale = viewportHeight / gameBaseHeight;
             } else {
-                // Viewport hẹp hơn hoặc bằng game
+                // Viewport hẹp hơn hoặc bằng game (có khoảng trống ở trên/dưới)
                 scale = viewportWidth / gameBaseWidth;
             }
 
             // --- Áp dụng giới hạn cho scale ---
-            // Giới hạn scale tối đa
             scale = Math.min(scale, maxGameScale);
-            // Giới hạn scale tối thiểu
             scale = Math.max(scale, minGameScale);
 
             // Áp dụng scale cho game container
             gameContainer.style.transform = `scale(${scale})`;
             
-            // Với display: flex, justify-content: center, align-items: center trên body,
-            // chúng ta không cần set left và top nữa.
-            // gameContainer.style.left = (viewportWidth - gameBaseWidth * scale) / 2 + 'px';
-            // gameContainer.style.top = (viewportHeight - gameBaseHeight * scale) / 2 + 'px';
-
-            // Ẩn/hiện mobile controls dựa trên kích thước màn hình
-            // Hiển thị nếu game bị scale nhỏ hơn một ngưỡng nhất định (ví dụ: 80% kích thước gốc)
-            if (scale < 0.8) { 
-                document.getElementById('mobile-controls').style.display = 'flex';
+            // Ẩn/hiện mobile controls dựa trên tỷ lệ game và kích thước viewport
+            const mobileControls = document.getElementById('mobile-controls');
+            // Nếu tỷ lệ game nhỏ (ví dụ: đang chơi trên mobile dọc) HOẶC nếu chiều rộng viewport không quá lớn (ví dụ dưới 1000px, phù hợp cho mobile ngang và tablet)
+            if (scale < 1.0 || viewportWidth < 1000) { 
+                mobileControls.style.display = 'flex';
             } else {
-                document.getElementById('mobile-controls').style.display = 'none';
+                mobileControls.style.display = 'none';
             }
         }
 
@@ -760,9 +760,16 @@
 
             const existingResetButton = document.querySelector('#game-message #reset-button');
             if (existingResetButton) {
+                // Đảm bảo loại bỏ event listener cũ trước khi thêm cái mới để tránh trùng lặp
                 existingResetButton.removeEventListener('click', initializeGame);
+                existingResetButton.removeEventListener('touchend', initializeGame); // Thêm cho cảm ứng
             }
+            // Thêm event listener cho cả click (PC) và touchend (cảm ứng)
             document.querySelector('#game-message #reset-button').addEventListener('click', initializeGame);
+            document.querySelector('#game-message #reset-button').addEventListener('touchend', (e) => {
+                e.preventDefault(); // Ngăn hành vi mặc định của touchend (như mouse click)
+                initializeGame();
+            });
 
             cancelAnimationFrame(window.animationFrameId);
         }
@@ -884,7 +891,7 @@
         leftButton.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingLeft = true; });
         leftButton.addEventListener('touchend', (e) => { e.preventDefault(); isMovingLeft = false; });
         rightButton.addEventListener('touchstart', (e) => { e.preventDefault(); isMovingRight = true; });
-        rightButton.addEventListener('touchend', (e) => { e.preventDefault(); }); 
+        rightButton.addEventListener('touchend', (e) => { e.preventDefault(); isMovingRight = false; }); // Sửa lỗi: touchend phải reset isMovingRight
         jumpButton.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); });
         jumpButton.addEventListener('touchend', (e) => { e.preventDefault(); }); 
 
