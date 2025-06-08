@@ -6,6 +6,62 @@
     <title>Mario Đơn Giản (Tối ưu Full)</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* ... (CSS hiện có) ... */
+
+        /* CSS cho phần hướng dẫn */
+        #game-instructions {
+            position: absolute;
+            top: 20px; /* Điều chỉnh vị trí từ trên xuống */
+            left: 20px; /* Điều chỉnh vị trí từ trái sang */
+            background-color: rgba(0, 0, 0, 0.7); /* Nền tối trong suốt */
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.9em; /* Kích thước chữ */
+            z-index: 50; /* Đảm bảo nằm trên các yếu tố game nhưng dưới game message */
+            display: block; /* Mặc định hiển thị */
+            transition: opacity 0.5s ease-out; /* Hiệu ứng mờ dần */
+            pointer-events: none; /* Quan trọng: Không chặn click/touch vào game */
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            text-shadow: 1px 1px 2px black;
+        }
+
+        #game-instructions p {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        /* Responsive cho hướng dẫn trên mobile */
+        @media (max-width: 999px) {
+            #game-instructions {
+                top: 10px;
+                left: 10px;
+                font-size: 0.7em; /* Nhỏ hơn trên mobile */
+                padding: 8px 12px;
+            }
+        }
+        @media (max-width: 480px) { /* Cho màn hình rất nhỏ */
+            #game-instructions {
+                font-size: 0.6em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-world">
+            <div id="player"></div>
+            <div id="finish-line"></div>
+            <div id="game-instructions">
+                <p><strong>Hướng dẫn:</strong></p>
+                <p>←/A: Di chuyển trái</p>
+                <p>→/D: Di chuyển phải</p>
+                <p>↑/Space: Nhảy</p>
+                <p>Đạt Cổng để thắng!</p>
+            </div>
+        </div>
+    </div>
         body {
             margin: 0;
             overflow: hidden; /* Ngăn thanh cuộn của body */
