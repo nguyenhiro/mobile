@@ -15,16 +15,15 @@
             background-repeat: no-repeat;
             background-position: center center;
             
-            /* SỬ DỤNG GRID ĐỂ CÓ BỐ CỤC LINH HOẠT HƠN */
             display: grid;
             grid-template-areas: 
                 "game-area"
                 "controls-area"; /* Mặc định mobile dọc: controls nằm dưới game */
-            grid-template-rows: 1fr auto; /* Game chiếm phần lớn, controls chiếm phần nhỏ */
+            grid-template-rows: 1fr auto; 
             grid-template-columns: 1fr;
             
-            justify-items: center; /* Căn giữa nội dung trong mỗi area theo chiều ngang */
-            align-items: center;   /* Căn giữa nội dung trong mỗi area theo chiều dọc */
+            justify-items: center; 
+            align-items: center;   
             
             min-height: 100vh;
             width: 100vw; 
@@ -36,8 +35,7 @@
         }
 
         #game-container {
-            grid-area: game-area; /* Đặt game vào vùng game-area */
-            /* Kích thước gốc (tỷ lệ 2:1) - Đây là kích thước logic của game */
+            grid-area: game-area; 
             width: 900px; 
             height: 450px;
             border: 5px solid #333;
@@ -49,18 +47,18 @@
             transform: scale(1); 
             transition: transform 0.1s ease-out; 
             
-            /* TĂNG GIỚI HẠN KÍCH THƯỚC TRÊN PC ĐỂ GAME TO HƠN NỮA */
-            max-width: 99vw; /* Tăng từ 98vw lên 99vw */
-            max-height: 99vh; /* Tăng từ 98vh lên 99vh */
+            max-width: 99vw; 
+            max-height: 99vh; 
         }
 
         #game-world {
             position: absolute;
             top: 0;
             left: 0;
-            width: 2500px; /* Chiều rộng thế giới game */
+            width: 2500px; 
             height: 100%;
-            transition: transform 0.1s linear; /* Có thể thử bỏ transition nếu vẫn không mượt */
+            /* ĐÃ BỎ TRANSITION ĐỂ CAMERA VÀ VẬT THỂ DI CHUYỂN MƯỢT HƠN */
+            /* transition: transform 0.1s linear; */ 
             background-image: url('game.jpg');
             background-size: cover;
             background-repeat: no-repeat;
@@ -206,12 +204,12 @@
 
         /* Mobile Controls (Portrait/Default) */
         #mobile-controls {
-            grid-area: controls-area; /* Đặt controls vào vùng controls-area */
+            grid-area: controls-area; 
             width: 100%; 
             max-width: 900px; 
             padding: 10px; 
             display: flex;
-            justify-content: space-around; /* Căn đều các nhóm nút */
+            justify-content: space-around; 
             align-items: center;
             z-index: 1000;
             background-color: transparent; 
@@ -220,7 +218,7 @@
             box-sizing: border-box;
             gap: 15px; 
             pointer-events: auto;
-            display: none; /* Mặc định ẩn, JS sẽ điều khiển */
+            display: none; 
         }
         .control-group {
             display: flex;
@@ -257,36 +255,34 @@
             transform: scale(0.9); 
         }
 
-        /* Mobile Controls (Landscape) - RIÊNG BIỆT ĐỂ ĐẶT VỊ TRÍ */
+        /* Mobile Controls (Landscape) - TỐI ƯU VỊ TRÍ NÚT */
         #left-controls-area {
             grid-area: controls-left;
-            display: none; /* Mặc định ẩn, chỉ hiện khi landscape */
+            display: none; 
             flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 10px;
-            /* Thêm khoảng cách giữa các nút nếu cần */
-            gap: 15px; 
+            gap: 15px;
             background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
-            /* Dịch các nút di chuyển sang phải */
-            margin-right: -10%; /* Điều chỉnh giá trị này để dịch sang phải */
+            /* Dịch các nút di chuyển sang phải trong khu vực của nó */
+            padding-right: 20px; /* Thêm padding bên phải để đẩy nút sang trái hơn */
         }
         #right-controls-area {
             grid-area: controls-right;
-            display: none; /* Mặc định ẩn, chỉ hiện khi landscape */
+            display: none; 
             flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 10px;
-            /* Thêm khoảng cách giữa các nút nếu cần */
             gap: 15px; 
             background-color: transparent; 
             height: 100%;
             box-sizing: border-box;
-            /* Dịch nút nhảy sang trái */
-            margin-left: -10%; /* Điều chỉnh giá trị này để dịch sang trái */
+            /* Dịch nút nhảy sang trái trong khu vực của nó */
+            padding-left: 20px; /* Thêm padding bên trái để đẩy nút sang phải hơn */
         }
 
 
@@ -320,17 +316,21 @@
             }
             /* ĐIỀU CHỈNH KÍCH THƯỚC THÔNG BÁO KẾT THÚC GAME CHO PORTRAIT */
             #game-message {
-                padding: 10px; /* Giảm padding thêm */
-                font-size: 1.0em; /* Giảm font size thêm */
+                padding: 8px; /* Giảm padding thêm nữa */
+                font-size: 0.9em; /* Giảm font size thêm nữa */
             }
             #game-message p {
-                font-size: 0.7em; /* Giảm font size cho P bên trong */
+                font-size: 0.6em; /* Giảm font size cho P bên trong */
+                margin-bottom: 1vw; /* Giảm margin bottom */
             }
             #game-message ul {
-                font-size: 0.5em; /* Giảm font size cho UL bên trong */
+                font-size: 0.45em; /* Giảm font size cho UL bên trong */
+                max-height: 8vh; /* Giảm max height */
+                padding-top: 0.8vw; /* Giảm padding top */
             }
             #reset-button {
-                font-size: 1.0em; /* Giảm font size nút reset */
+                font-size: 0.9em; /* Giảm font size nút reset */
+                padding: 0.8vw 1.5vw; /* Giảm padding nút reset */
             }
         }
 
@@ -339,7 +339,8 @@
             body {
                 grid-template-areas: 
                     "controls-left game-area controls-right";
-                grid-template-columns: auto 1fr auto; /* Controls trái/phải tự động, game ở giữa */
+                /* Tối ưu hóa grid columns để căn chỉnh nút */
+                grid-template-columns: auto 1fr auto; 
                 grid-template-rows: 1fr; 
             }
             #game-container {
@@ -347,13 +348,17 @@
                 max-height: 98vh; 
             }
             #mobile-controls {
-                display: none !important; /* Ẩn bộ controls dọc */
+                display: none !important; 
             }
             #left-controls-area {
                 display: flex; 
+                padding-left: 20px; /* Đảm bảo có khoảng cách an toàn từ mép trái */
+                padding-right: 0; /* Đặt lại padding phải nếu đã có */
             }
             #right-controls-area {
                 display: flex; 
+                padding-right: 20px; /* Đảm bảo có khoảng cách an toàn từ mép phải */
+                padding-left: 0; /* Đặt lại padding trái nếu đã có */
             }
             .control-button {
                 width: 10vw; 
@@ -368,17 +373,21 @@
             }
             /* ĐIỀU CHỈNH KÍCH THƯỚC THÔNG BÁO KẾT THÚC GAME CHO LANDSCAPE */
             #game-message {
-                padding: 15px; /* Giảm padding thêm */
-                font-size: 1.4em; /* Giảm font size thêm */
+                padding: 12px; /* Giảm padding thêm nữa */
+                font-size: 1.2em; /* Giảm font size thêm nữa */
             }
             #game-message p {
-                font-size: 0.8em; /* Giảm font size cho P bên trong */
+                font-size: 0.7em; /* Giảm font size cho P bên trong */
+                margin-bottom: 0.8vw;
             }
             #game-message ul {
-                font-size: 0.6em; /* Giảm font size cho UL bên trong */
+                font-size: 0.55em; /* Giảm font size cho UL bên trong */
+                max-height: 9vh;
+                padding-top: 0.7vw;
             }
             #reset-button {
-                font-size: 1.1em; /* Giảm font size nút reset */
+                font-size: 1.0em; /* Giảm font size nút reset */
+                padding: 0.9vw 1.8vw;
             }
         }
 
@@ -400,7 +409,7 @@
                 font-size: 2.2em; 
             }
             #mobile-controls, #left-controls-area, #right-controls-area {
-                display: none !important; /* Đảm bảo ẩn hoàn toàn trên PC */
+                display: none !important; 
             }
         }
     </style>
@@ -489,7 +498,7 @@
         let facingRight = true;
 
         let lastFrameTime = 0;
-        const targetFPS = 60;
+        const targetFPS = 60; // Dùng để chuẩn hóa tốc độ dựa trên delta time
 
         let gameElements = [];
         let movingObstacles = [];
@@ -497,7 +506,7 @@
         // Kích thước game gốc (reference size)
         const gameBaseWidth = 900;
         const gameBaseHeight = 450;
-        const gameAspectRatio = gameBaseWidth / gameBaseHeight; // 2:1
+        const gameAspectRatio = gameBaseWidth / gameBaseHeight; 
 
         // --- CÁC GIỚI HẠN SCALE ---
         const minGameScale = 0.8; 
@@ -859,14 +868,15 @@
                 const minLeft = obs.initialLeft;
 
                 // Sử dụng delta để tốc độ mượt mà hơn
+                // Nhân với targetFPS để chuẩn hóa tốc độ độc lập với FPS thực tế
                 obs.element.style.left = currentLeft + (obs.speed * obs.direction * delta * targetFPS) + 'px';
 
                 if (obs.direction === 1 && parseInt(obs.element.style.left) >= maxLeft) {
                     obs.direction = -1;
-                    obs.element.style.left = maxLeft + 'px'; 
+                    obs.element.style.left = maxLeft + 'px'; // Đảm bảo vật thể không đi quá giới hạn
                 } else if (obs.direction === -1 && parseInt(obs.element.style.left) <= minLeft) {
                     obs.direction = 1;
-                    obs.element.style.left = minLeft + 'px'; 
+                    obs.element.style.left = minLeft + 'px'; // Đảm bảo vật thể không đi quá giới hạn
                 }
             });
 
@@ -892,16 +902,12 @@
 
             updatePlayerPosition();
 
-            // SỬA LỖI CAMERA MOBILE KHÔNG MƯỢT
-            // Tính toán vị trí player trong hệ tọa độ game world
-            const currentScale = gameContainer.getBoundingClientRect().width / gameBaseWidth;
-
-            // Tính toán vị trí camera mong muốn dựa trên playerX và scale
+            // CẬP NHẬT LOGIC CAMERA ĐỂ THEO DÕI MƯỢT MÀ HƠN
+            // Tính toán vị trí player trong hệ tọa độ game world (không scaled)
             // Camera sẽ cố gắng giữ người chơi ở giữa màn hình logic của game
             let targetCameraX = -(playerX - (gameBaseWidth / 2)); 
             
             // Giới hạn cameraX để không cuộn ra ngoài thế giới game
-            // (level1Data.worldWidth - gameBaseWidth) là phần game world cần cuộn
             const minAllowedCameraX = -(level1Data.worldWidth - gameBaseWidth); 
             const maxAllowedCameraX = 0; 
 
@@ -909,6 +915,7 @@
             cameraX = Math.min(maxAllowedCameraX, targetCameraX); 
             cameraX = Math.max(minAllowedCameraX, cameraX); 
 
+            // Áp dụng transform cho gameWorld (đã bỏ transition trên CSS để mượt hơn)
             gameWorld.style.transform = `translateX(${cameraX}px)`;
 
 
@@ -991,7 +998,7 @@
             playerActualHeight = playerBaseHeight;
             player.classList.remove('crouching', 'in-air', 'flipped');
             facingRight = true;
-            cameraX = 0; // Đặt lại cameraX khi khởi tạo game
+            cameraX = 0; 
 
             gameMessage.style.display = 'none'; 
 
