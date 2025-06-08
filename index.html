@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pikachu (Version 1.6.8)</title>
+    <title>Game Pikachu (Version 1.6.9)</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -36,8 +36,8 @@
 
         #game-container {
             grid-area: game-area; 
-            width: 900px; /* Kích thước tham chiếu */
-            height: 450px; /* Kích thước tham chiếu */
+            width: 1280px; /* Kích thước tham chiếu */
+            height: 720px; /* Kích thước tham chiếu */
             border: 5px solid #333;
             background-color: #aaddff;
             position: relative; 
@@ -542,8 +542,8 @@
         let movingObstacles = [];
 
         // Kích thước game gốc (reference size)
-        const gameBaseWidth = 900;
-        const gameBaseHeight = 450;
+        const gameBaseWidth = 1280;
+        const gameBaseHeight = 720;
         const gameAspectRatio = gameBaseWidth / gameBaseHeight; 
 
         // --- CÁC GIỚI HẠN SCALE ---
@@ -563,7 +563,7 @@
         // --- Cấu trúc Level (đã thêm level2) ---
         const gameLevels = {
             level1: {
-                worldWidth: 7000, 
+                worldWidth: 6000, 
                 initialPlayerX: 50,
                 initialPlayerY: 50, // Hoặc tính toán lại dựa trên bottom của platform đầu tiên
                 finishLine: { left: 4950, bottom: 50, width: 30, height: 120 }, 
@@ -614,7 +614,7 @@
                 ]
             },
             level2: {
-                worldWidth: 6000, // Level 2 có thể dài hơn
+                worldWidth: 7000, // Level 2 có thể dài hơn
                 initialPlayerX: 50,
                 initialPlayerY: 50, 
                 finishLine: { left: 5900, bottom: 50, width: 30, height: 120 },
