@@ -57,8 +57,6 @@
             left: 0;
             width: 2500px; /* Chiều rộng thế giới game */
             height: 100%;
-            /* ĐÃ BỎ TRANSITION ĐỂ CAMERA VÀ VẬT THỂ DI CHUYỂN MƯỢT HƠN */
-            /* transition: transform 0.1s linear; */ 
             background-image: url('game.jpg');
             background-size: cover;
             background-repeat: no-repeat;
@@ -267,7 +265,7 @@
             height: 100%;
             box-sizing: border-box;
             /* Thêm padding để đẩy các nút vào bên trong khỏi mép màn hình */
-            padding-left: 10px; 
+            padding-left: 15px; /* Tăng padding */
         }
         #right-controls-area {
             grid-area: controls-right;
@@ -280,7 +278,7 @@
             height: 100%;
             box-sizing: border-box;
             /* Thêm padding để đẩy các nút vào bên trong khỏi mép màn hình */
-            padding-right: 10px; 
+            padding-right: 15px; /* Tăng padding */
         }
 
 
@@ -337,9 +335,8 @@
             body {
                 grid-template-areas: 
                     "controls-left game-area controls-right";
-                /* Tối ưu hóa grid columns để căn chỉnh nút */
-                /* Sử dụng minmax để các cột controls có chiều rộng tối thiểu và linh hoạt */
-                grid-template-columns: minmax(60px, 1fr) 4fr minmax(60px, 1fr); 
+                /* Tăng kích thước tối thiểu cho cột controls để đảm bảo không gian */
+                grid-template-columns: minmax(80px, 1fr) 4fr minmax(80px, 1fr); 
                 grid-template-rows: 1fr; 
             }
             #game-container {
@@ -530,6 +527,7 @@
             const mobileControlsLeftLandscape = document.getElementById('left-controls-area');
             const mobileControlsRightLandscape = document.getElementById('right-controls-area');
 
+            // Kiểm tra kích thước và hướng của màn hình để hiển thị đúng bộ điều khiển
             if (viewportWidth < 1000 && viewportWidth / viewportHeight < 1) { // Mobile dọc
                 mobileControlsPortrait.style.display = 'flex';
                 mobileControlsLeftLandscape.style.display = 'none';
@@ -848,9 +846,9 @@
             cancelAnimationFrame(window.animationFrameId);
         }
 
-        // Camera dead zone parameters
-        const deadZoneWidth = 0.4; // 40% của gameBaseWidth
-        const deadZoneOffset = (1 - deadZoneWidth) / 2; // Khoảng cách từ mép đến vùng chết
+        // Camera dead zone parameters - GIẢM VÙNG CHẾT ĐỂ CAMERA NHẠY HƠN
+        const deadZoneWidth = 0.2; // 20% của gameBaseWidth. Camera sẽ cuộn khi player ra khỏi 10% trái/phải màn hình
+        const deadZoneOffset = (1 - deadZoneWidth) / 2; 
 
         function gameLoop(currentTime) {
             if (isGameOver) return;
@@ -898,17 +896,17 @@
             updatePlayerPosition();
 
             // Camera logic with dead zone
-            // Vị trí player tương đối so với màn hình gameContainer (0 đến gameBaseWidth)
-            const playerScreenX = playerX + cameraX;
+            const playerScreenX = playerX + cameraX; // Vị trí của người chơi trên màn hình game (trong khung gameContainer)
 
             const deadZoneLeft = gameBaseWidth * deadZoneOffset;
             const deadZoneRight = gameBaseWidth * (1 - deadZoneOffset);
 
+            // Nếu người chơi di chuyển ra khỏi vùng chết bên trái
             if (playerScreenX < deadZoneLeft) {
-                // Di chuyển camera sang phải nếu player đi vào vùng chết bên trái
                 cameraX += (deadZoneLeft - playerScreenX);
-            } else if (playerScreenX > deadZoneRight - playerActualWidth) { // - playerActualWidth để tính mép phải của player
-                // Di chuyển camera sang trái nếu player đi vào vùng chết bên phải
+            } 
+            // Nếu người chơi di chuyển ra khỏi vùng chết bên phải
+            else if (playerScreenX > deadZoneRight - playerActualWidth) { 
                 cameraX += (deadZoneRight - playerActualWidth - playerScreenX);
             }
             
