@@ -36,8 +36,8 @@
 
         #game-container {
             grid-area: game-area;   
-            width: 900px;   
-            height: 450px;
+            width: 900px;   /* Kích thước mặc định cho PC */
+            height: 450px;  /* Kích thước mặc định cho PC */
             border: 5px solid #333;
             background-color: #aaddff;
             position: relative; 
@@ -46,9 +46,7 @@
             transform-origin: center center; 
             transform: scale(1);    
             transition: transform 0.1s ease-out;    
-            
-            max-width: 99vw;    
-            max-height: 99vh;   
+            /* Các thuộc tính max-width và max-height được chuyển xuống media queries mobile */
         }
 
         #game-world {
@@ -296,8 +294,10 @@
                 grid-template-columns: 1fr;
             }
             #game-container {
-                max-width: 90vw; /* Giảm từ 95vw xuống 90vw để game nhỏ lại một chút */
-                max-height: 65vh; /* Giảm từ 70vh xuống 65vh để game nhỏ lại một chút */
+                max-width: 90vw; /* Áp dụng riêng cho mobile */
+                max-height: 65vh; /* Áp dụng riêng cho mobile */
+                width: auto; /* Cho phép tự điều chỉnh chiều rộng */
+                height: auto; /* Cho phép tự điều chỉnh chiều cao */
             }
             #mobile-controls {
                 width: 90%; 
@@ -343,8 +343,10 @@
                 grid-template-rows: 1fr;    
             }
             #game-container {
-                max-width: 75vw; /* Giảm từ 80vw xuống 75vw để game nhỏ lại một chút */
-                max-height: 90vh; /* Giảm từ 98vh xuống 90vh để game nhỏ lại một chút */
+                max-width: 75vw; /* Áp dụng riêng cho mobile */
+                max-height: 90vh; /* Áp dụng riêng cho mobile */
+                width: auto;
+                height: auto;
             }
             #mobile-controls {
                 display: none !important;   
@@ -387,12 +389,19 @@
         }
 
 
-        /* Cho màn hình lớn (PC) - KHÔNG ĐỤNG ĐẾN */
+        /* Cho màn hình lớn (PC) - KHÔNG ĐỤNG ĐẾN, KÍCH THƯỚC CỐ ĐỊNH */
         @media (min-width: 1000px) {
             body {
                 grid-template-areas: "game-area";   
                 grid-template-rows: 1fr;
                 grid-template-columns: 1fr;
+            }
+            #game-container {
+                width: 900px;  /* Đảm bảo kích thước cố định cho PC */
+                height: 450px; /* Đảm bảo kích thước cố định cho PC */
+                transform: scale(1); /* Đảm bảo không bị scale bởi CSS */
+                max-width: none; /* Hủy bỏ giới hạn kích thước tối đa */
+                max-height: none; /* Hủy bỏ giới hạn kích thước tối đa */
             }
             #time-display {
                 font-size: 1.3em;
@@ -471,7 +480,7 @@
         let playerActualHeight = playerBaseHeight;
 
         const hitboxXOffset = 10;   
-        const hitboxYOffset = 5;    
+        const hitboxYOffset = 0;    // ĐÃ CHỈNH SỬA: Đặt lại về 0 để đồng nhất playerY với đáy hitbox
 
         const deathFallThreshold = -100;    
 
@@ -512,34 +521,29 @@
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
 
-            let scale = 1;
-            const viewportAspectRatio = viewportWidth / viewportHeight;
+            // Chỉ áp dụng logic scale cho thiết bị di động/máy tính bảng
+            if (viewportWidth < 1000) { 
+                let scale;
+                const viewportAspectRatio = viewportWidth / viewportHeight;
 
-            // Logic scale cho PC (min-width: 1000px) sẽ không thay đổi
-            if (viewportWidth >= 1000) {
-                // Giữ nguyên logic cũ của bạn cho PC, không thay đổi scale
-                // Thực tế, với @media query cho PC, gameContainer.style.transform đã được reset về scale(1)
-                // và kích thước 900x450px được giữ nguyên.
-                // Hàm này chỉ đảm bảo không có scaling thừa.
-                gameContainer.style.transform = `scale(1)`;
-                playerActualWidth = playerBaseWidth;
-                playerActualHeight = playerBaseHeight;
-            } else { // Xử lý mobile và tablet
                 if (viewportAspectRatio > gameAspectRatio) {
                     scale = viewportHeight / gameBaseHeight;
                 } else {
                     scale = viewportWidth / gameBaseWidth;
                 }
 
-                // Điều chỉnh scale cho mobile, có thể làm nhỏ hơn một chút nếu cần
-                // Giữ nguyên minGameScale và maxGameScale đã có, CSS sẽ kiểm soát
-                // phần làm nhỏ hơn qua max-width và max-height của game-container.
                 scale = Math.min(scale, maxGameScale);
                 scale = Math.max(scale, minGameScale);
 
                 gameContainer.style.transform = `scale(${scale})`;
-                playerActualWidth = playerBaseWidth / scale; // Đảm bảo hitbox player tương ứng với scale
-                playerActualHeight = playerBaseHeight / scale; // Đảm bảo hitbox player tương ứng với scale
+                // playerActualWidth/Height được tính toán ngược lại với scale để hitbox giữ nguyên tỉ lệ với thế giới game
+                playerActualWidth = playerBaseWidth / scale;
+                playerActualHeight = playerBaseHeight / scale;
+            } else { // PC (viewportWidth >= 1000)
+                // Đảm bảo PC không bị scale bởi JS. CSS sẽ xử lý kích thước cố định.
+                gameContainer.style.transform = `scale(1)`;
+                playerActualWidth = playerBaseWidth; // Đặt lại kích thước player về base cho PC
+                playerActualHeight = playerBaseHeight; // Đặt lại kích thước player về base cho PC
             }
             
             const mobileControlsPortrait = document.getElementById('mobile-controls');
@@ -675,7 +679,7 @@
             const playerHitbox = {
                 left: playerX + hitboxXOffset,
                 right: playerX + playerActualWidth - hitboxXOffset,
-                bottom: playerY + hitboxYOffset,
+                bottom: playerY + hitboxYOffset, // hitboxYOffset = 0, nên đây là playerY
                 top: playerY + playerActualHeight
             };
 
@@ -713,7 +717,7 @@
             const playerHitbox = {
                 left: playerX + hitboxXOffset,
                 right: playerX + playerActualWidth - hitboxXOffset,
-                bottom: playerY + hitboxYOffset,
+                bottom: playerY, // ĐÃ CHỈNH SỬA: hitboxYOffset = 0, nên bottom hitbox là playerY
                 top: playerY + playerActualHeight
             };
             
@@ -731,7 +735,7 @@
                         {
                             playerY = elementRect.bottom - playerActualHeight;  
                             yVelocity = 0;  
-                            isJumping = true;   
+                            isJumping = true;   // Vẫn giữ lại, nhưng có thể cân nhắc lại nếu chỉ là đụng trần
                         }
                     }
                 });
@@ -744,10 +748,11 @@
 
                     const horizontalOverlap = (playerHitbox.right > elementRect.left && playerHitbox.left < elementRect.right);
 
+                    // ĐÃ CHỈNH SỬA: Điều kiện va chạm khi tiếp đất
                     if (horizontalOverlap && 
                         yVelocity <= 0 &&    
-                        (previousPlayerY + hitboxYOffset) >= elementRect.top && 
-                        (playerY + hitboxYOffset) <= elementRect.top)  
+                        previousPlayerY >= elementRect.top &&  // Previous position was above platform top
+                        playerY <= elementRect.top)             // Current position is at or below platform top
                     {
                         if (element.classList.contains('hazard')) {
                             endGame('Bạn đã chạm chướng ngại vật nguy hiểm!');
@@ -763,7 +768,7 @@
             });
 
             if (playerCurrentlyOnPlatform) {
-                playerY = highestPlatformY - hitboxYOffset;
+                playerY = highestPlatformY; // ĐÃ CHỈNH SỬA: Đặt playerY bằng top của platform
                 yVelocity = 0;
                 isJumping = false;
             } else {
@@ -772,7 +777,8 @@
             
             isOnPlatform = playerCurrentlyOnPlatform;   
 
-            if (playerY + hitboxYOffset < deathFallThreshold && !isGameOver) {  
+            // ĐÃ CHỈNH SỬA: Kiểm tra rơi xuống vực với hitboxYOffset = 0
+            if (playerY < deathFallThreshold && !isGameOver) {  
                 endGame('Bạn đã rơi xuống vực!');
                 return; 
             }
@@ -786,7 +792,7 @@
             const playerHitbox = {
                 left: playerX + hitboxXOffset,
                 right: playerX + playerActualWidth - hitboxXOffset,
-                bottom: playerY + hitboxYOffset,
+                bottom: playerY, // ĐÃ CHỈNH SỬA: hitboxYOffset = 0
                 top: playerY + playerActualHeight
             };
 
@@ -935,8 +941,8 @@
         function initializeGame() {
             isGameOver = false;
             gameMessage.style.display = 'none';
-            playerX = 50;
-            playerY = 0;
+            playerX = 50; // ĐÃ CHỈNH SỬA: Đặt playerY an toàn trên platform đầu tiên
+            playerY = 50; // ĐÃ CHỈNH SỬA: Đặt playerY an toàn trên platform đầu tiên
             xVelocity = 0;
             yVelocity = 0;
             cameraX = 0;
@@ -945,6 +951,7 @@
             player.classList.remove('flipped'); // Đảm bảo player hướng đúng ban đầu
             
             // Đảm bảo kích thước player ban đầu được thiết lập trước khi bắt đầu loop
+            // Nó sẽ được cập nhật bởi resizeGame() ngay sau đó
             playerActualWidth = playerBaseWidth;
             playerActualHeight = playerBaseHeight;
 
